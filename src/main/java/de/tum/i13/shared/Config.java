@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Config {
     @CommandLine.Option(names = "-p", description = "sets the port of the server", defaultValue = "5153")
@@ -23,6 +25,15 @@ public class Config {
 
     @CommandLine.Option(names = "-l", description = "Logfile", defaultValue = "echo.log")
     public Path logfile;
+
+    @CommandLine.Option(names = "-ll", description = "Loglevel", defaultValue = "ALL")
+    public String logLevel;
+
+    @CommandLine.Option(names = "-c", description = "Size of cache", defaultValue = "100")
+    public int cacheSize;
+
+    @CommandLine.Option(names = "-s", description = "Cache displacement strategy", defaultValue = "FIFO")
+    public String strategy;
 
     @CommandLine.Option(names = "-h", description = "Displays help", usageHelp = true)
     public boolean usagehelp;

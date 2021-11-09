@@ -1,5 +1,6 @@
 package de.tum.i13.server.threadperconnection;
 
+import de.tum.i13.server.echo.CacheManager;
 import de.tum.i13.server.echo.EchoLogic;
 import de.tum.i13.shared.CommandProcessor;
 import de.tum.i13.shared.Config;
@@ -8,6 +9,8 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static de.tum.i13.shared.Config.parseCommandlineArgs;
 import static de.tum.i13.shared.LogSetup.setupLogging;
@@ -17,9 +20,21 @@ import static de.tum.i13.shared.LogSetup.setupLogging;
  */
 public class Main {
 
+    public  static CacheManager cacheManager;
+
+    public final static Logger LOGGER = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) throws IOException {
         Config cfg = parseCommandlineArgs(args);  //Do not change this
         setupLogging(cfg.logfile);
+
+        LOGGER.setLevel(Level.parse(cfg.logLevel));
+
+        if (!cfg.strategy.equals("FIFO") && !cfg.strategy.equals("LRU") && !cfg.strategy.equals("LFU")) {
+            throw new RuntimeException("Cache display strategy is incorrect!");
+        }
+
+        cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
 
         final ServerSocket serverSocket = new ServerSocket();
 

@@ -6,16 +6,61 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
+import static de.tum.i13.server.threadperconnection.Main.cacheManager;
+
+
 public class EchoLogic implements CommandProcessor {
     public static Logger logger = Logger.getLogger(EchoLogic.class.getName());
+
 
     public String process(String command) {
 
         logger.info("received command: " + command.trim());
 
         //Let the magic happen here
+        String[] input = command.split(" ");
 
-        return command;
+        switch (input[0]) {
+            case "put":
+                String value = "";
+
+                if (input.length < 3) {
+                    return "error: key and/or value is missing";
+                }
+
+                for (int i = 2; i < input.length; i++) {
+                    value = input[i];
+                }
+                value = value.trim();
+                return put(input[1], value);
+
+            case "get":
+                if (input.length < 2) {
+                    return "error: key is missing";
+                }
+                return get(input[1]);
+
+            case "delete":
+                if (input.length < 2) {
+                    return "error: key is missing";
+                }
+                return delete(input[1]);
+
+            default:
+                return "error: unknown command";
+        }
+    }
+
+    private String put(String key, String value) {
+        return cacheManager.put(key, value);
+    }
+
+    private String get(String key) {
+        return cacheManager.get(key);
+    }
+
+    private String delete(String key) {
+        return cacheManager.delete(key);
     }
 
     @Override
