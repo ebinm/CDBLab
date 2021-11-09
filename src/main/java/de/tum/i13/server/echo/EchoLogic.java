@@ -2,6 +2,7 @@ package de.tum.i13.server.echo;
 
 import de.tum.i13.shared.CommandProcessor;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Logger;
@@ -13,7 +14,7 @@ public class EchoLogic implements CommandProcessor {
     public static Logger logger = Logger.getLogger(EchoLogic.class.getName());
 
 
-    public String process(String command) {
+    public String process(String command) throws IOException {
 
         logger.info("received command: " + command.trim());
 
@@ -51,15 +52,15 @@ public class EchoLogic implements CommandProcessor {
         }
     }
 
-    private String put(String key, String value) {
+    private String put(String key, String value) throws IOException {
         return cacheManager.put(key, value);
     }
 
-    private String get(String key) {
+    private String get(String key) throws IOException {
         return cacheManager.get(key);
     }
 
-    private String delete(String key) {
+    private String delete(String key) throws IOException {
         return cacheManager.delete(key);
     }
 

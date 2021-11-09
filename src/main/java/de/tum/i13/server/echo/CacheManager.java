@@ -2,6 +2,8 @@ package de.tum.i13.server.echo;
 
 import jdk.internal.net.http.common.Pair;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class CacheManager {
         this.file = new FileManager(dataDir);
     }
 
-    public synchronized String put(String key, String value) {
+    public synchronized String put(String key, String value) throws IOException {
         if(dataCache.contains(key)) {
             return updateCache(key, value);
 
@@ -67,7 +69,7 @@ public class CacheManager {
         }
     }
 
-    public synchronized String get(String key) {
+    public synchronized String get(String key) throws IOException {
         if (dataCache.contains(key)) {
             int index = dataCache.indexOf(key);
             KVPair kvPair = dataCache.remove(index);
@@ -107,7 +109,7 @@ public class CacheManager {
         }
     }
 
-    public synchronized String delete(String key) {
+    public synchronized String delete(String key) throws IOException {
         if (dataCache.contains(key)) {
             dataCache.remove(key);
             return "delete_success " + key;
