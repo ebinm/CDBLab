@@ -29,7 +29,8 @@ public class CacheManager {
 
     public synchronized String put(String key, String value) {
         if(dataCache.contains(key)) {
-            return updateCache(key, value);
+            updateCache(key, value);
+            return "put_update " + key;
 
         } else {
             //TODO they kv is looked up in the file and if it is there it will be updated otherwise it will be added to the list
@@ -75,7 +76,7 @@ public class CacheManager {
             dataCache.add(kvPair);
             return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
         } else if (file.contains(key)){
-            KVPair kvPair = new KVPair(key, file.get(key), timeline++);
+            KVPair kvPair = new KVPair(key, file.delete(key), timeline++);
 
             if (dataCache.size() <= size) {
                 dataCache.add(kvPair);
@@ -113,7 +114,8 @@ public class CacheManager {
             return "delete_success " + key;
 
         } else if (file.contains(key)) {
-            return file.delete(key);
+            file.delete(key);
+            return "delete_success " + key;
         } else {
             return "delete_error " + key;
         }
@@ -151,12 +153,11 @@ public class CacheManager {
         }).get());
     }
 
-    private String updateCache(String key, String value) {
+    private void updateCache(String key, String value) {
         int index = dataCache.indexOf(key);
         KVPair kvPair = dataCache.remove(index);
         kvPair.setValue(value);
         kvPair.increaseCounter();
         dataCache.add(kvPair);
-        return "put_update " + key;
     }
 }
