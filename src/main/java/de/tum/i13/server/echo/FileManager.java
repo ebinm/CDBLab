@@ -25,7 +25,11 @@ public class FileManager {
 
         String line = br.readLine();
 
+
+
         while (line != null ){
+
+
 
             if (line.startsWith(key)){
                 bw.write(key + ";" + value);
@@ -77,7 +81,7 @@ public class FileManager {
         directionary.resolve("temp.txt");
 
         BufferedReader br = new BufferedReader(new FileReader(in));
-        PrintWriter pw = new  PrintWriter (new FileWriter(out));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(out));
 
 
         String line = br.readLine();
@@ -85,13 +89,15 @@ public class FileManager {
 
         while (line != null ){
 
-            if (line.trim().startsWith(key)){
+            if (line.startsWith(key)){
+              bw.flush();
 
-              pw.println(line);
-              pw.flush();
+            }
+            else {
+                bw.write(line);
             }
 
-            pw.close();
+            bw.close();
               br.close();
             }
 
@@ -103,7 +109,6 @@ public class FileManager {
         return  key;
 
         }
-
 
 
 
