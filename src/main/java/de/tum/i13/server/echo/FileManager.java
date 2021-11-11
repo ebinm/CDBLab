@@ -46,12 +46,25 @@ public class FileManager {
     }
 
     //return only the value
-    public String get(String key) {
+    public String get(String key) throws IOException {
+
+        BufferedReader br = new BufferedReader(new FileReader(String.valueOf(directionary.getFileName())));
+        String line = br.readLine();
+
+  String value="";
 
 
+        while (line != null){
 
+            if (line.startsWith(key)){
 
-        return null;
+                String[] KVTab = line.split(";");
+
+                    value = KVTab[1];
+
+            }
+        }
+        return value;
     }
 
 
@@ -59,10 +72,40 @@ public class FileManager {
     //delete the kv pair from the file
     public String delete(String key) throws IOException {
 
+        File out = new File("temp.txt");
+        File in = new File (String.valueOf(directionary.getFileName()));
+        directionary.resolve("temp.txt");
+
+        BufferedReader br = new BufferedReader(new FileReader(in));
+        PrintWriter pw = new  PrintWriter (new FileWriter(out));
 
 
-        return null;
-    }
+        String line = br.readLine();
+
+
+        while (line != null ){
+
+            if (line.trim().startsWith(key)){
+
+              pw.println(line);
+              pw.flush();
+            }
+
+            pw.close();
+              br.close();
+            }
+
+
+        in.renameTo(new File("trash"));
+        out.renameTo(new File(String.valueOf(directionary.getFileName())));
+        in.delete();
+
+        return  key;
+
+        }
+
+
+
 
     public boolean contains(String key) throws IOException {
 
@@ -72,7 +115,7 @@ public class FileManager {
         boolean exist = false;
 
         while (line != null && !exist) {
-            if (key.equals(line)) {
+            if (key.startsWith(line)) {
                 exist = true;
             } else {
                 line = br.readLine();
