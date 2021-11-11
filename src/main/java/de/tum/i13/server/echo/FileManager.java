@@ -43,9 +43,9 @@ public class FileManager {
         bw.close();
         br.close();
 
-        in.renameTo(new File("trash"));
-        out.renameTo(new File(String.valueOf(directionary.getFileName())));
         in.delete();
+        out.renameTo(new File(String.valueOf(directionary.getFileName())));
+
 
     }
 
@@ -89,22 +89,22 @@ public class FileManager {
 
         while (line != null ){
 
-            if (line.startsWith(key)){
-              bw.flush();
+            if (line.startsWith(key) == false ){
+
+                bw.write(line);
+                bw.flush();
 
             }
-            else {
-                bw.write(line);
-            }
+
 
             bw.close();
               br.close();
             }
 
 
-        in.renameTo(new File("trash"));
-        out.renameTo(new File(String.valueOf(directionary.getFileName())));
         in.delete();
+        out.renameTo(new File(String.valueOf(directionary.getFileName())));
+
 
         return  key;
 
