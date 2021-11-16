@@ -72,7 +72,7 @@ public class ClientSideApplication {
             return;
         }
 
-        printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey());
+        printEchoLine(kvMessage.getStatus().toString().toLowerCase() + " " + kvMessage.getKey());
     }
 
     private static void get(CommunicationModule communicationModule, String[] command) {
