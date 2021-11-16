@@ -60,8 +60,7 @@ public class CacheManager {
             dataCache.add(kvPair);
             return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
         } else if (file.contains(key)){
-            KVPair kvPair = new KVPair(key, file.delete(key), timeline++);
-
+            KVPair kvPair = new KVPair(key, file.get(key), timeline++);
             add(kvPair.getKey(), kvPair.getValue());
             return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
 

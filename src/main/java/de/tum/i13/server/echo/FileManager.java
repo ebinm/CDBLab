@@ -107,6 +107,7 @@ public class FileManager {
 
         String line = br.readLine();
         String keyTemp = "";
+        String value = "";
 
 
         while (line != null ){
@@ -118,6 +119,8 @@ public class FileManager {
                 bw.newLine();
                 bw.flush();
 
+            } else {
+                value = line.split(";")[1];
             }
 
             //Change by Ebin
@@ -150,7 +153,7 @@ public class FileManager {
         cw.close();
         cr.close();
 
-        return  key;
+        return value;
 
     }
 
