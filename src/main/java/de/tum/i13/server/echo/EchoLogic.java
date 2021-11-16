@@ -31,7 +31,7 @@ public class EchoLogic implements CommandProcessor {
         String[] input = command.trim().split(" ");
 
         switch (input[0]) {
-            case "PUT":
+            case "put":
                 String value = "";
 
                 if (input.length < 3) {
@@ -44,13 +44,13 @@ public class EchoLogic implements CommandProcessor {
                 value = value.substring(0, value.length());
                 return put(input[1], value) + " \n";
 
-            case "GET":
+            case "get":
                 if (input.length < 2) {
                     return "GET_ERROR key is missing \n";
                 }
                 return get(input[1]) + " \n";
 
-            case "DELETE":
+            case "delete":
                 if (input.length < 2) {
                     return "DELETE_ERROR: key is missing \n";
                 }

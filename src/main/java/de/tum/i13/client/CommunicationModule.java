@@ -18,9 +18,9 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
     public KVMessage put(String key, String value) throws Exception {
 
         if (value.equals("null")) {
-            super.write(KVMessage.StatusType.DELETE + " " + key);
+            super.write("delete " + key);
         } else {
-            super.write(KVMessage.StatusType.PUT + " " + key + " " + value);
+            super.write("put " + key + " " + value);
         }
         String input;
         input = super.readline();
@@ -113,7 +113,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
 
     @Override
     public KVMessage get(String key) throws Exception {
-        super.write(KVMessage.StatusType.GET + " " + key);
+        super.write("get " + key);
         String input;
         input = super.readline();
         String[] message = input.split(" ");

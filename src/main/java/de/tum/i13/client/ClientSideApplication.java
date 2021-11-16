@@ -18,7 +18,7 @@ public class ClientSideApplication {
 
                 System.out.print("EchoClient> ");
                 String line = reader.readLine();
-                String[] command = line.split(" ");
+                String[] command = line.trim().split(" ");
                 //System.out.print("command:");
                 //System.out.println(line);
                 switch (command[0]) {
