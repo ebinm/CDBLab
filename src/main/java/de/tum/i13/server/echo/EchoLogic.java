@@ -35,29 +35,29 @@ public class EchoLogic implements CommandProcessor {
                 String value = "";
 
                 if (input.length < 3) {
-                    return "PUT_ERROR key and/or value is missing";
+                    return "PUT_ERROR key and/or value is missing \n";
                 }
 
                 for (int i = 2; i < input.length; i++) {
                     value = input[i] + " ";
                 }
                 value = value.substring(0, value.length());
-                return put(input[1], value);
+                return put(input[1], value) + " \n";
 
             case "GET":
                 if (input.length < 2) {
-                    return "GET_ERROR key is missing";
+                    return "GET_ERROR key is missing \n";
                 }
-                return get(input[1]);
+                return get(input[1]) + " \n";
 
             case "DELETE":
                 if (input.length < 2) {
-                    return "DELETE_ERROR: key is missing";
+                    return "DELETE_ERROR: key is missing \n";
                 }
-                return delete(input[1]);
+                return delete(input[1]) + " \n";
 
             default:
-                return "ERROR unknown command";
+                return "ERROR unknown command \n";
         }
     }
 

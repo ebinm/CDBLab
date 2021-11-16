@@ -34,7 +34,7 @@ public class ConnectionHandleThread extends Thread {
             while ((firstLine = in.readLine()) != null) {
                 LOGGER.info("Processing new input of Thread " + Thread.currentThread().getName());
                 String res = cp.process(firstLine);
-                out.write(res + "\r\n");
+                out.write(res);
                 out.flush();
             }
         } catch(Exception ex) {
