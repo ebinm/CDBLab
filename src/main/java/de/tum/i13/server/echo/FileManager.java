@@ -69,12 +69,13 @@ public class FileManager {
 
 
         String value="";
+        String keyTemp;
 
 
         while (line != null){
 
-            line = line.split(";")[0];
-            if (line.equals(key)){
+            keyTemp = line.split(";")[0];
+            if (keyTemp.equals(key)){
 
                 String[] KVTab = line.split(";");
 
