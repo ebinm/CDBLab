@@ -120,12 +120,12 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
 
         switch (message[0]) {
             case "get_success":
-                String value = "";
+                StringBuilder value = new StringBuilder();
                 for (int i = 2; i < message.length; i++) {
-                    value = message[i] + " ";
+                    value.append(message[i]).append(" ");
                 }
-                value = value.substring(0, value.length() - 1);
-                String finalValue = value;
+                value = new StringBuilder(value.substring(0, value.length() - 1));
+                String finalValue = value.toString();
                 return new KVMessage() {
                 @Override
                 public String getKey() {

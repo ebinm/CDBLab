@@ -33,17 +33,17 @@ public class EchoLogic implements CommandProcessor {
         switch (input[0]) {
             case "put":
                 logger.info("starting put operation");
-                String value = "";
+                StringBuilder value = new StringBuilder();
 
                 if (input.length < 3) {
                     return "put_error key and/or value is missing\n";
                 }
 
                 for (int i = 2; i < input.length; i++) {
-                    value = input[i] + " ";
+                    value.append(input[i]).append(" ");
                 }
-                value = value.substring(0, value.length());
-                return put(input[1], value) + "\n";
+                value = new StringBuilder(value.substring(0, value.length() - 1));
+                return put(input[1], value.toString()) + "\n";
 
             case "get":
                 logger.info("starting get operation");

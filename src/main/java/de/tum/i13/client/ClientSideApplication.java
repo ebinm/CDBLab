@@ -57,16 +57,16 @@ public class ClientSideApplication {
         }
 
         String key = command[1];
-        String value = "";
+        StringBuilder value = new StringBuilder();
 
         for (int i = 2; i < command.length; i++) {
-            value = command[i] + " ";
+            value.append(command[i]).append(" ");
         }
-        value = value.substring(0, value.length() - 1);
+        value = new StringBuilder(value.substring(0, value.length() - 1));
 
         KVMessage kvMessage;
         try {
-            kvMessage = communicationModule.put(key, value);
+            kvMessage = communicationModule.put(key, value.toString());
         } catch (Exception e) {
             printEchoLine("PUT_ERROR Put command could not be executed!");
             return;
