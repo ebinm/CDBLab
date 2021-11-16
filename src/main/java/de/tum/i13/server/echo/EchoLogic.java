@@ -32,10 +32,11 @@ public class EchoLogic implements CommandProcessor {
 
         switch (input[0]) {
             case "put":
+                logger.info("starting put operation");
                 String value = "";
 
                 if (input.length < 3) {
-                    return "PUT_ERROR key and/or value is missing\n";
+                    return "put_error key and/or value is missing\n";
                 }
 
                 for (int i = 2; i < input.length; i++) {
@@ -45,19 +46,21 @@ public class EchoLogic implements CommandProcessor {
                 return put(input[1], value) + "\n";
 
             case "get":
+                logger.info("starting get operation");
                 if (input.length < 2) {
-                    return "GET_ERROR key is missing\n";
+                    return "get_error key is missing\n";
                 }
                 return get(input[1]) + "\n";
 
             case "delete":
+                logger.info("starting delete operation");
                 if (input.length < 2) {
-                    return "DELETE_ERROR: key is missing\n";
+                    return "delete_error key is missing\n";
                 }
                 return delete(input[1]) + "\n";
 
             default:
-                return "ERROR unknown command\n";
+                return "error unknown command\n";
         }
     }
 
@@ -65,7 +68,7 @@ public class EchoLogic implements CommandProcessor {
         try {
             return cacheManager.put(key, value);
         } catch (IOException e) {
-            return "PUT_ERROR " + e.getMessage();
+            return "put_error " + e.getMessage();
         }
     }
 
@@ -73,7 +76,7 @@ public class EchoLogic implements CommandProcessor {
         try {
             return cacheManager.get(key);
         } catch (IOException e) {
-            return "GET_ERROR " + e.getMessage();
+            return "get_error " + e.getMessage();
         }
     }
 
@@ -81,7 +84,7 @@ public class EchoLogic implements CommandProcessor {
         try {
             return cacheManager.delete(key);
         } catch (IOException e) {
-            return "DELETE_ERROR " + e.getMessage();
+            return "delete_error " + e.getMessage();
         }
     }
 

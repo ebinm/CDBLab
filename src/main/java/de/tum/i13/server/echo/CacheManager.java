@@ -31,19 +31,19 @@ public class CacheManager {
     public synchronized String put(String key, String value) throws IOException {
         if(dataCache.contains(new KVPair(key, value, 0))) {
             updateCache(key, value);
-            return "PUT_UPDATE " + key;
+            return "put_update " + key;
 
         } else {
             //TODO they kv is looked up in the file and if it is there it will be updated otherwise it will be added to the list
             if (file.contains(key)) {
                 file.delete(key);
                 add(key, value);
-                return "PUT_UPDATE " + key;
+                return "put_update " + key;
 
             } else {
                 //add kv to cache
                 add(key, value);
-                return "PUT_SUCCESS " + key;
+                return "put_success " + key;
             }
         }
     }
@@ -54,12 +54,12 @@ public class CacheManager {
             KVPair kvPair = dataCache.remove(index);
             kvPair.increaseCounter();
             dataCache.add(kvPair);
-            return "GET_SUCCESS " + kvPair.getKey() + " " + kvPair.getValue();
+            return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
         } else if (file.contains(key)){
             KVPair kvPair = new KVPair(key, file.delete(key), timeline++);
 
             add(kvPair.getKey(), kvPair.getValue());
-            return "GET_SUCCESS " + kvPair.getKey() + " " + kvPair.getValue();
+            return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
 
         } else {
             return "get_error " + key;
@@ -69,13 +69,13 @@ public class CacheManager {
     public synchronized String delete(String key) throws IOException {
         if (dataCache.contains(new KVPair(key, "", 0))) {
             dataCache.remove(new KVPair(key, "", 0));
-            return "DELETE_SUCCESS " + key;
+            return "delete_success " + key;
 
         } else if (file.contains(key)) {
             file.delete(key);
-            return "DELETE_SUCCESS " + key;
+            return "delete_success " + key;
         } else {
-            return "DELETE_ERROR " + key;
+            return "delete_error " + key;
         }
     }
 

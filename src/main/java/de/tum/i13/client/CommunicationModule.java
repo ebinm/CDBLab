@@ -27,7 +27,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
         String[] message = input.split(" ");
 
         switch (message[0]) {
-            case "PUT_SUCCESS": return new KVMessage() {
+            case "put_success": return new KVMessage() {
                 @Override
                 public String getKey() {
                     return key;
@@ -43,7 +43,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
                     return StatusType.PUT_SUCCESS;
                 }
             };
-            case "PUT_UPDATE": return new KVMessage() {
+            case "put_update": return new KVMessage() {
                 @Override
                 public String getKey() {
                     return key;
@@ -59,7 +59,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
                     return StatusType.PUT_UPDATE;
                 }
             };
-            case "PUT_ERROR": return new KVMessage() {
+            case "put_error": return new KVMessage() {
                 @Override
                 public String getKey() {
                     return key;
@@ -75,7 +75,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
                     return StatusType.PUT_ERROR;
                 }
             };
-            case "DELETE_SUCCESS": return new KVMessage() {
+            case "delete_success": return new KVMessage() {
                 @Override
                 public String getKey() {
                     return key;
@@ -91,7 +91,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
                     return StatusType.DELETE_SUCCESS;
                 }
             };
-            case "DELETE_ERROR": return new KVMessage() {
+            case "delete_error": return new KVMessage() {
                 @Override
                 public String getKey() {
                     return key;
@@ -119,7 +119,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
         String[] message = input.split(" ");
 
         switch (message[0]) {
-            case "GET_SUCCESS":
+            case "get_success":
                 String value = "";
                 for (int i = 2; i < message.length; i++) {
                     value = message[i] + " ";
@@ -142,7 +142,7 @@ public class CommunicationModule extends ActiveConnection implements KVStore {
                     return StatusType.GET_SUCCESS;
                 }
             };
-            case "GET_ERROR": return new KVMessage() {
+            case "get_error": return new KVMessage() {
                 @Override
                 public String getKey() {
                     return key;
