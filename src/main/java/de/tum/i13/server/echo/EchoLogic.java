@@ -1,67 +1,88 @@
 package de.tum.i13.server.echo;
 
 import de.tum.i13.shared.CommandProcessor;
+import de.tum.i13.shared.Config;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
-import static de.tum.i13.server.threadperconnection.Main.cacheManager;
 
 
 public class EchoLogic implements CommandProcessor {
+
     public static Logger logger = Logger.getLogger(EchoLogic.class.getName());
 
+    private Config cfg;
+    private CacheManager cacheManager;
 
-    public String process(String command) throws IOException {
+    public EchoLogic(Config config) {
+        this.cfg = config;
+        cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
+    }
+
+    public String process(String command) {
+
 
         logger.info("received command: " + command.trim());
 
         //Let the magic happen here
-        String[] input = command.split(" ");
+        String[] input = command.trim().split(" ");
 
         switch (input[0]) {
-            case "put":
+            case "PUT":
                 String value = "";
 
                 if (input.length < 3) {
-                    return "error: key and/or value is missing";
+                    return "PUT_ERROR key and/or value is missing";
                 }
 
                 for (int i = 2; i < input.length; i++) {
-                    value = input[i];
+                    value = input[i] + " ";
                 }
-                value = value.trim();
+                value = value.substring(0, value.length());
                 return put(input[1], value);
 
-            case "get":
+            case "GET":
                 if (input.length < 2) {
-                    return "error: key is missing";
+                    return "GET_ERROR key is missing";
                 }
                 return get(input[1]);
 
-            case "delete":
+            case "DELETE":
                 if (input.length < 2) {
-                    return "error: key is missing";
+                    return "DELETE_ERROR: key is missing";
                 }
                 return delete(input[1]);
 
             default:
-                return "error: unknown command";
+                return "ERROR unknown command";
         }
     }
 
-    private String put(String key, String value) throws IOException {
-        return cacheManager.put(key, value);
+    private String put(String key, String value){
+        try {
+            return cacheManager.put(key, value);
+        } catch (IOException e) {
+            return "PUT_ERROR " + e.getMessage();
+        }
     }
 
-    private String get(String key) throws IOException {
-        return cacheManager.get(key);
+    private String get(String key) {
+        try {
+            return cacheManager.get(key);
+        } catch (IOException e) {
+            return "GET_ERROR " + e.getMessage();
+        }
     }
 
-    private String delete(String key) throws IOException {
-        return cacheManager.delete(key);
+    private String delete(String key){
+        try {
+            return cacheManager.delete(key);
+        } catch (IOException e) {
+            return "DELETE_ERROR " + e.getMessage();
+        }
     }
 
     @Override

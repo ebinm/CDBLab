@@ -22,7 +22,7 @@ public class StartSimpleNioServer {
         logger.info("starting server");
 
         //Replace with your Key Value command processor
-        CommandProcessor echoLogic = new EchoLogic();
+        CommandProcessor echoLogic = new EchoLogic(cfg);
 
         SimpleNioServer sn = new SimpleNioServer(echoLogic);
         sn.bindSockets(cfg.listenaddr, cfg.port);

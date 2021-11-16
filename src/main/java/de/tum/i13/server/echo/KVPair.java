@@ -1,7 +1,8 @@
 package de.tum.i13.server.echo;
 
-import jdk.internal.net.http.common.Pair;
 
+
+import javafx.util.Pair;
 import java.util.Objects;
 
 public class KVPair {
@@ -25,19 +26,19 @@ public class KVPair {
     }
 
     public String getKey() {
-        return pair.first;
+        return pair.getKey();
     }
 
     public void setKey(String key) {
-        pair = new Pair<>(key, pair.second);
+        pair = new Pair<>(key, pair.getValue());
     }
 
     public String getValue() {
-        return pair.second;
+        return pair.getValue();
     }
 
     public void setValue(String value) {
-        pair = new Pair<>(pair.first, value);
+        pair = new Pair<>(pair.getKey(), value);
     }
 
     public int getCounter() {
@@ -62,10 +63,10 @@ public class KVPair {
 
     @Override
     public boolean equals(Object o) {
-        if (this.pair.first == o) return true;
-        if (o == null || pair.first.getClass() != o.getClass()) return false;
-        String key = (String) o;
-        return Objects.equals(pair.first, key);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KVPair kvPair = (KVPair) o;
+        return Objects.equals(pair.getKey(), kvPair.pair.getKey());
     }
 
     @Override

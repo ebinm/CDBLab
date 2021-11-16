@@ -1,6 +1,5 @@
 package de.tum.i13.server.echo;
 
-import jdk.internal.net.http.common.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,96 +29,53 @@ public class CacheManager {
     }
 
     public synchronized String put(String key, String value) throws IOException {
-        if(dataCache.contains(key)) {
+        if(dataCache.contains(new KVPair(key, value, 0))) {
             updateCache(key, value);
-            return "put_update " + key;
+            return "PUT_UPDATE " + key;
 
         } else {
             //TODO they kv is looked up in the file and if it is there it will be updated otherwise it will be added to the list
             if (file.contains(key)) {
                 file.delete(key);
-                dataCache.add(new KVPair(key, value, timeline++));
-                return "put_success " + key;
+                add(key, value);
+                return "PUT_UPDATE " + key;
 
             } else {
                 //add kv to cache
-                if (dataCache.size() <= size) {
-                    dataCache.add(new KVPair(key, value, timeline++));
-
-                } else {
-                    int indexToRemove;
-                    switch (strategy) {
-                        case "FIFO":
-                            indexToRemove = removeFIFO();
-                            break;
-                        case "LRU":
-                            indexToRemove = removeLRU();
-                            break;
-                        case "LFU":
-                            indexToRemove = removeLFU();
-                            break;
-                        default:
-                            throw new IllegalStateException("Unexpected value: " + strategy);
-                    }
-                    KVPair kvPair = dataCache.remove(indexToRemove);
-                    file.put(kvPair.getKey(), kvPair.getValue());
-                    dataCache.add(new KVPair(key, value, timeline++));
-                }
-                return "put_success " + key;
+                add(key, value);
+                return "PUT_SUCCESS " + key;
             }
         }
     }
 
     public synchronized String get(String key) throws IOException {
-        if (dataCache.contains(key)) {
-            int index = dataCache.indexOf(key);
+        if (dataCache.contains(new KVPair(key, "", 0))) {
+            int index = dataCache.indexOf(new KVPair(key, "", 0));
             KVPair kvPair = dataCache.remove(index);
             kvPair.increaseCounter();
             dataCache.add(kvPair);
-            return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
+            return "GET_SUCCESS " + kvPair.getKey() + " " + kvPair.getValue();
         } else if (file.contains(key)){
             KVPair kvPair = new KVPair(key, file.delete(key), timeline++);
 
-            if (dataCache.size() <= size) {
-                dataCache.add(kvPair);
-                return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
-            } else {
-
-                int indexToRemove;
-                switch (strategy) {
-                    case "FIFO":
-                        indexToRemove = removeFIFO();
-                        break;
-                    case "LRU":
-                        indexToRemove = removeLRU();
-                        break;
-                    case "LFU":
-                        indexToRemove = removeLFU();
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + strategy);
-                }
-                KVPair kvPairOld = dataCache.remove(indexToRemove);
-                file.put(kvPairOld.getKey(), kvPairOld.getValue());
-                dataCache.add(kvPair);
-                return "get_success " + kvPair.getKey() + " " + kvPair.getValue();
-            }
+            add(kvPair.getKey(), kvPair.getValue());
+            return "GET_SUCCESS " + kvPair.getKey() + " " + kvPair.getValue();
 
         } else {
-            return "get_error " + key;
+            return "GET_ERROR " + key;
         }
     }
 
     public synchronized String delete(String key) throws IOException {
-        if (dataCache.contains(key)) {
-            dataCache.remove(key);
-            return "delete_success " + key;
+        if (dataCache.contains(new KVPair(key, "", 0))) {
+            dataCache.remove(new KVPair(key, "", 0));
+            return "DELETE_SUCCESS " + key;
 
         } else if (file.contains(key)) {
             file.delete(key);
-            return "delete_success " + key;
+            return "DELETE_SUCCESS " + key;
         } else {
-            return "delete_error " + key;
+            return "DELETE_ERROR " + key;
         }
     }
 
@@ -156,10 +112,35 @@ public class CacheManager {
     }
 
     private void updateCache(String key, String value) {
-        int index = dataCache.indexOf(key);
+        int index = dataCache.indexOf(new KVPair(key, "", 0));
         KVPair kvPair = dataCache.remove(index);
         kvPair.setValue(value);
         kvPair.increaseCounter();
         dataCache.add(kvPair);
+    }
+
+    private void add(String key, String value) throws IOException {
+        if (dataCache.size() < size) {
+            dataCache.add(new KVPair(key, value, timeline++));
+
+        } else {
+            int indexToRemove;
+            switch (strategy) {
+                case "FIFO":
+                    indexToRemove = removeFIFO();
+                    break;
+                case "LRU":
+                    indexToRemove = removeLRU();
+                    break;
+                case "LFU":
+                    indexToRemove = removeLFU();
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + strategy);
+            }
+            KVPair kvPair = dataCache.remove(indexToRemove);
+            file.put(kvPair.getKey(), kvPair.getValue());
+            dataCache.add(new KVPair(key, value, timeline++));
+        }
     }
 }

@@ -20,7 +20,6 @@ import static de.tum.i13.shared.LogSetup.setupLogging;
  */
 public class Main {
 
-    public  static CacheManager cacheManager;
 
     public final static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
@@ -34,7 +33,6 @@ public class Main {
             throw new RuntimeException("Cache display strategy is incorrect!");
         }
 
-        cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
 
         final ServerSocket serverSocket = new ServerSocket();
 
@@ -55,12 +53,13 @@ public class Main {
 
         //Replace with your Key value server logic.
         // If you use multithreading you need locking
-        CommandProcessor logic = new EchoLogic();
+        CommandProcessor logic = new EchoLogic(cfg);
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
 
             //When we accept a connection, we start a new Thread for this connection
+            LOGGER.info("Creating a new Thread with new Connection");
             Thread th = new ConnectionHandleThread(logic, clientSocket);
             th.start();
         }

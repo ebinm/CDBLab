@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import static de.tum.i13.server.threadperconnection.Main.LOGGER;
+
 public class ConnectionHandleThread extends Thread {
     private CommandProcessor cp;
     private Socket clientSocket;
@@ -21,13 +23,18 @@ public class ConnectionHandleThread extends Thread {
     @Override
     public void run() {
         try {
+            LOGGER.info("New Thread " + Thread.currentThread().getName() + " is running");
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), Constants.TELNET_ENCODING));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), Constants.TELNET_ENCODING));
 
+            out.write("Connection with Server successful\r\n");
+            out.flush();
+
             String firstLine;
             while ((firstLine = in.readLine()) != null) {
+                LOGGER.info("Processing new input of Thread " + Thread.currentThread().getName());
                 String res = cp.process(firstLine);
-                out.write(res);
+                out.write(res + "\r\n");
                 out.flush();
             }
         } catch(Exception ex) {

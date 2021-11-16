@@ -76,7 +76,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
-                                    <mainClass>de.tum.i13.client.Milestone1Main</mainClass>
+                                    <mainClass>de.tum.i13.client.ClientSideApplication</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -137,6 +137,11 @@
             <artifactId>hamcrest-library</artifactId>
             <version>2.2-rc1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>14.0.1</version>
         </dependency>
 
     </dependencies>
