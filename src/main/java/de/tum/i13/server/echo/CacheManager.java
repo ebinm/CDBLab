@@ -31,18 +31,22 @@ public class CacheManager {
     public synchronized String put(String key, String value) throws IOException {
         if(dataCache.contains(new KVPair(key, value, 0))) {
             updateCache(key, value);
+            file.delete(key);
+            file.put(key, value);
             return "put_update " + key;
 
         } else {
             //TODO they kv is looked up in the file and if it is there it will be updated otherwise it will be added to the list
             if (file.contains(key)) {
                 file.delete(key);
+                file.put(key, value);
                 add(key, value);
                 return "put_update " + key;
 
             } else {
                 //add kv to cache
                 add(key, value);
+                file.put(key, value);
                 return "put_success " + key;
             }
         }
@@ -69,6 +73,7 @@ public class CacheManager {
     public synchronized String delete(String key) throws IOException {
         if (dataCache.contains(new KVPair(key, "", 0))) {
             dataCache.remove(new KVPair(key, "", 0));
+            file.delete(key);
             return "delete_success " + key;
 
         } else if (file.contains(key)) {
