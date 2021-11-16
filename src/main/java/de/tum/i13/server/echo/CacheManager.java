@@ -62,7 +62,7 @@ public class CacheManager {
             return "GET_SUCCESS " + kvPair.getKey() + " " + kvPair.getValue();
 
         } else {
-            return "GET_ERROR " + key;
+            return "get_error " + key;
         }
     }
 

@@ -93,7 +93,7 @@ public class ClientSideApplication {
         switch (kvMessage.getStatus()) {
             case GET_SUCCESS: printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey() + " " +
                     kvMessage.getValue()); return;
-            case GET_ERROR: printEchoLine(kvMessage.getStatus().toString().toLowerCase() + " " + kvMessage.getKey());
+            case GET_ERROR: printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey());
         }
     }
 
