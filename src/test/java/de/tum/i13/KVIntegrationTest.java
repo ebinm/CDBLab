@@ -39,7 +39,7 @@ public class KVIntegrationTest {
             @Override
             public void run() {
                 try {
-                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{port.toString()});
+                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -62,7 +62,7 @@ public class KVIntegrationTest {
             @Override
             public void run() {
                 try {
-                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{port.toString()});
+                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
