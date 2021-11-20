@@ -6,8 +6,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Tests {
 
@@ -20,8 +19,7 @@ public class Tests {
         output.write(req + "\r\n");
         output.flush();
 
-        String res = input.readLine();
-        return res;
+        return input.readLine();
     }
 
     public String doRequest(String req) throws IOException {
@@ -41,7 +39,7 @@ public class Tests {
                 try {
                     de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
             }
         };
@@ -53,10 +51,8 @@ public class Tests {
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
         String line = input.readLine();
         String shouldBe = "Connection to MSRG Echo server established: /127.0.0.1:5153";
-        assertThat(line, is(equalTo(shouldBe)));
         s.close();
-
-
+        assertEquals(line, shouldBe);
     }
 
     @Test
@@ -67,7 +63,7 @@ public class Tests {
                 try {
                     de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
             }
         };
@@ -82,15 +78,15 @@ public class Tests {
 
         String request = "put test value";
         String shouldBe = "put_success test";
-        assertThat(doRequest(request), is(equalTo(shouldBe)));
+        assertEquals(doRequest(request), shouldBe);
 
         request = "get test";
         shouldBe = "get_success test value";
-        assertThat(doRequest(request), is(equalTo(shouldBe)));
+        assertEquals(doRequest(request), shouldBe);
 
         request = "delete test";
         shouldBe = "delete_success test";
-        assertThat(doRequest(request), is(equalTo(shouldBe)));
+        assertEquals(doRequest(request), shouldBe);
         s.close();
 
     }
@@ -103,7 +99,7 @@ public class Tests {
                 try {
                     de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
             }
         };
@@ -126,7 +122,7 @@ public class Tests {
                 try {
                     de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                 }
             }
         };
@@ -135,7 +131,7 @@ public class Tests {
 
         request = "get test";
         String shouldBe = "get_success test value";
-        assertThat(doRequest(request), is(equalTo(shouldBe)));
+        assertEquals(doRequest(request), shouldBe);
 
         doRequest("delete test");
         s.close();

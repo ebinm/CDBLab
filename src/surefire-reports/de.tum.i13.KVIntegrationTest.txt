@@ -1,0 +1,11 @@
+-------------------------------------------------------------------------------
+Test set: de.tum.i13.KVIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 9.14 s <<< FAILURE! - in de.tum.i13.KVIntegrationTest
+smokeTest  Time elapsed: 2.06 s  <<< FAILURE!
+java.lang.AssertionError: 
+
+Expected: is "hello "
+     but: was "Connection to MSRG Echo server established: /127.0.0.1:5153"
+	at de.tum.i13.KVIntegrationTest.smokeTest(KVIntegrationTest.java:54)
+
