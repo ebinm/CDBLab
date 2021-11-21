@@ -21,7 +21,9 @@ public class FileManager {
         }
     }
 
-    //put kv into file
+    /*
+   in this method we put the KV in the in the file
+     */
     public void put(String key, String value) throws IOException {
 
 
@@ -35,7 +37,9 @@ public class FileManager {
 
     }
 
-    //return only the value
+    /*
+    In this methode we return the Value that corresponds to the key
+     */
     public String get(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -67,13 +71,12 @@ public class FileManager {
 
 
 
-    //delete the kv pair from the file
+    /*
+    In this methode we delete the kv pair from the file
+     */
     public String delete(String key) throws IOException {
 
-        //Change by Ebin
         File out = new File(directionary.resolve("temp.txt").toString());
-        //File in = new File (String.valueOf(directionary.getFileName()));
-
 
         BufferedReader br = new BufferedReader(new FileReader(file));
         BufferedWriter bw = new BufferedWriter(new FileWriter(out));
@@ -127,7 +130,9 @@ public class FileManager {
         return  key;
 
     }
-
+/*
+In this method we check if the Key is already stored in the File and returns a boolean
+ */
     public boolean contains(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
