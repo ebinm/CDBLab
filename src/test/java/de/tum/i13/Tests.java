@@ -92,7 +92,7 @@ public class Tests {
     }
 
     @Test
-    public void persistenTest() throws IOException, InterruptedException {
+    public void persistentTest() throws IOException, InterruptedException {
         Thread th = new Thread() {
             @Override
             public void run() {
