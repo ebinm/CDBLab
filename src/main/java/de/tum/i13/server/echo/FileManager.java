@@ -8,6 +8,7 @@ import java.nio.file.Path;
 public class FileManager {
 
     Path directionary;
+
     File file;
 
     public FileManager(Path dataDir) {
@@ -23,40 +24,13 @@ public class FileManager {
     //put kv into file
     public void put(String key, String value) throws IOException {
 
-        //File out = new File("temp.txt");
-        //File in = new File (String.valueOf(directionary.getFileName()));
-        //directionary.resolve("temp.txt");
 
-        //BufferedReader br = new BufferedReader(new FileReader(in));
         BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
-
-        //String line = br.readLine();
-
-
-
-//        while (line != null ){
-//
-//
-//
-//            if (line.startsWith(key)){
-//                bw.write(key + ";" + value);
-//                bw.flush();
-//            } else {
-//                bw.write(key + ";" + value);
-//                bw.flush();
-//            }
-//            //line = br.readLine();
-//
-//        }
 
         bw.write(key + ";" + value);
         bw.newLine();
         bw.flush();
         bw.close();
-        //br.close();
-
-        //in.delete();
-        //out.renameTo(new File(String.valueOf(directionary.getFileName())));
 
 
     }
@@ -69,13 +43,12 @@ public class FileManager {
 
 
         String value="";
-        String keyTemp;
 
 
         while (line != null){
 
-            keyTemp = line.split(";")[0];
-            if (keyTemp.equals(key)){
+            line = line.split(";")[0];
+            if (line.equals(key)){
 
                 String[] KVTab = line.split(";");
 
@@ -84,7 +57,7 @@ public class FileManager {
 
             } else {
 
-                //Change by Ebin!
+
                 line = br.readLine();
 
             }
@@ -108,7 +81,6 @@ public class FileManager {
 
         String line = br.readLine();
         String keyTemp = "";
-        String value = "";
 
 
         while (line != null ){
@@ -120,11 +92,9 @@ public class FileManager {
                 bw.newLine();
                 bw.flush();
 
-            } else {
-                value = line.split(";")[1];
             }
 
-            //Change by Ebin
+
             line = br.readLine();
 
         }
@@ -143,22 +113,20 @@ public class FileManager {
                 cw.flush();
 
 
-            //Change by Ebin
+
             line = cr.readLine();
 
         }
 
-        //Change by Ebin
+
         bw.close();
         br.close();
         cw.close();
         cr.close();
 
-        return value;
+        return  key;
 
     }
-
-
 
     public boolean contains(String key) throws IOException {
 

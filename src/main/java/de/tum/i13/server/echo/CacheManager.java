@@ -27,7 +27,11 @@ public class CacheManager {
         this.timeline = 0;
         this.file = new FileManager(dataDir);
     }
-
+/*
+In this method we add the KV to the cache
+if the value is already in the cash we update it
+else if the KV is in the file we update it and put it in the cache
+ */
     public synchronized String put(String key, String value) throws IOException {
         if(dataCache.contains(new KVPair(key, value, 0))) {
             updateCache(key, value);
@@ -51,7 +55,11 @@ public class CacheManager {
             }
         }
     }
-
+/*
+In this method we check if the key is in the cache if yes send to the server the value
+if not in the cache we look for the value in the file
+else send an error message
+ */
     public synchronized String get(String key) throws IOException {
         if (dataCache.contains(new KVPair(key, "", 0))) {
             int index = dataCache.indexOf(new KVPair(key, "", 0));
@@ -68,6 +76,11 @@ public class CacheManager {
             return "get_error " + key;
         }
     }
+    /*
+    In this method we delete the KV, we run over the cache if the KV is the cache we delete it
+    if not in the cache we run over the file and delete it from the file
+    if not in the cache and not in the file send an error message
+     */
 
     public synchronized String delete(String key) throws IOException {
         if (dataCache.contains(new KVPair(key, "", 0))) {
@@ -82,7 +95,9 @@ public class CacheManager {
             return "delete_error " + key;
         }
     }
-
+/*
+the FIFO remove method
+ */
     private int removeFIFO() {
         return dataCache.indexOf(dataCache.stream().min((o1, o2) -> {
             if (o1.getEntry() == o2.getEntry()) {
@@ -94,11 +109,15 @@ public class CacheManager {
             } else throw new RuntimeException("Error in removeFIFO!");
         }).get());
     }
-
+/*
+the LRU remove from the cache method
+ */
     private int removeLRU() {
         return size-1;
     }
-
+/*
+the LFU remove from the cash method
+ */
     private int removeLFU() {
         return dataCache.indexOf(dataCache.stream().min((o1, o2) -> {
             if (o1.getCounter() == o2.getCounter()) {
@@ -115,6 +134,9 @@ public class CacheManager {
         }).get());
     }
 
+    /*
+    in this methode we update the value in the cache
+     */
     private void updateCache(String key, String value) {
         int index = dataCache.indexOf(new KVPair(key, "", 0));
         KVPair kvPair = dataCache.remove(index);
@@ -122,7 +144,9 @@ public class CacheManager {
         kvPair.increaseCounter();
         dataCache.add(kvPair);
     }
-
+/*
+in the methode we add KV in the cache base on the remove methode that will be indicated
+ */
     private void add(String key, String value) throws IOException {
         if (dataCache.size() < size) {
             dataCache.add(new KVPair(key, value, timeline++));
