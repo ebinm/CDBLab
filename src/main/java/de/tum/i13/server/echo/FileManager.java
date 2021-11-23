@@ -19,62 +19,36 @@ public class FileManager {
         }
     }
 
-    //put kv into file
+    /*
+   in this method we put the KV in the in the file
+     */
     public void put(String key, String value) throws IOException {
 
-        //File out = new File("temp.txt");
-        //File in = new File (String.valueOf(directionary.getFileName()));
-        //directionary.resolve("temp.txt");
-
-        //BufferedReader br = new BufferedReader(new FileReader(in));
         BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
-
-        //String line = br.readLine();
-
-
-
-//        while (line != null ){
-//
-//
-//
-//            if (line.startsWith(key)){
-//                bw.write(key + ";" + value);
-//                bw.flush();
-//            } else {
-//                bw.write(key + ";" + value);
-//                bw.flush();
-//            }
-//            //line = br.readLine();
-//
-//        }
 
         bw.write(key + ";" + value);
         bw.newLine();
         bw.flush();
         bw.close();
-        //br.close();
-
-        //in.delete();
-        //out.renameTo(new File(String.valueOf(directionary.getFileName())));
-
-
     }
 
-    //return only the value
+    /*
+    In this methode we return the Value that corresponds to the key
+     */
     public String get(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line = br.readLine();
 
 
-        String value="";
+        String value = "";
         String keyTemp;
 
 
-        while (line != null){
+        while (line != null) {
 
             keyTemp = line.split(";")[0];
-            if (keyTemp.equals(key)){
+            if (keyTemp.equals(key)) {
 
                 String[] KVTab = line.split(";");
 
@@ -83,7 +57,6 @@ public class FileManager {
 
             } else {
 
-                //Change by Ebin!
                 line = br.readLine();
 
             }
@@ -92,13 +65,12 @@ public class FileManager {
     }
 
 
-
-    //delete the kv pair from the file
+    /*
+    In this methode we delete the kv pair from the file
+     */
     public String delete(String key) throws IOException {
 
-        //Change by Ebin
         File out = new File(directionary.resolve("temp.txt").toString());
-        //File in = new File (String.valueOf(directionary.getFileName()));
 
 
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -110,10 +82,10 @@ public class FileManager {
         String value = "";
 
 
-        while (line != null ){
+        while (line != null) {
 
             keyTemp = line.split(";")[0];
-            if (!keyTemp.equals(key)){
+            if (!keyTemp.equals(key)) {
 
                 bw.write(line);
                 bw.newLine();
@@ -123,7 +95,6 @@ public class FileManager {
                 value = line.split(";")[1];
             }
 
-            //Change by Ebin
             line = br.readLine();
 
         }
@@ -134,7 +105,7 @@ public class FileManager {
         line = cr.readLine();
 
 
-        while (line != null ){
+        while (line != null) {
 
             keyTemp = line.split(";")[0];
             cw.write(line);
@@ -142,12 +113,10 @@ public class FileManager {
             cw.flush();
 
 
-            //Change by Ebin
             line = cr.readLine();
 
         }
 
-        //Change by Ebin
         bw.close();
         br.close();
         cw.close();
@@ -157,8 +126,9 @@ public class FileManager {
 
     }
 
-
-
+    /*
+    In this method we check if the Key is already stored in the File and returns a boolean
+    */
     public boolean contains(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
