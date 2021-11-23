@@ -1,14 +1,12 @@
 package de.tum.i13.server.echo;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileManager {
 
     Path directionary;
-
     File file;
 
     public FileManager(Path dataDir) {
@@ -21,25 +19,48 @@ public class FileManager {
         }
     }
 
-    /*
-   in this method we put the KV in the in the file
-     */
+    //put kv into file
     public void put(String key, String value) throws IOException {
 
+        //File out = new File("temp.txt");
+        //File in = new File (String.valueOf(directionary.getFileName()));
+        //directionary.resolve("temp.txt");
 
+        //BufferedReader br = new BufferedReader(new FileReader(in));
         BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+
+        //String line = br.readLine();
+
+
+
+//        while (line != null ){
+//
+//
+//
+//            if (line.startsWith(key)){
+//                bw.write(key + ";" + value);
+//                bw.flush();
+//            } else {
+//                bw.write(key + ";" + value);
+//                bw.flush();
+//            }
+//            //line = br.readLine();
+//
+//        }
 
         bw.write(key + ";" + value);
         bw.newLine();
         bw.flush();
         bw.close();
+        //br.close();
+
+        //in.delete();
+        //out.renameTo(new File(String.valueOf(directionary.getFileName())));
 
 
     }
 
-    /*
-    In this methode we return the Value that corresponds to the key
-     */
+    //return only the value
     public String get(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -47,12 +68,13 @@ public class FileManager {
 
 
         String value="";
+        String keyTemp;
 
 
         while (line != null){
 
-            line = line.split(";")[0];
-            if (line.equals(key)){
+            keyTemp = line.split(";")[0];
+            if (keyTemp.equals(key)){
 
                 String[] KVTab = line.split(";");
 
@@ -61,7 +83,7 @@ public class FileManager {
 
             } else {
 
-
+                //Change by Ebin!
                 line = br.readLine();
 
             }
@@ -71,12 +93,13 @@ public class FileManager {
 
 
 
-    /*
-    In this methode we delete the kv pair from the file
-     */
+    //delete the kv pair from the file
     public String delete(String key) throws IOException {
 
+        //Change by Ebin
         File out = new File(directionary.resolve("temp.txt").toString());
+        //File in = new File (String.valueOf(directionary.getFileName()));
+
 
         BufferedReader br = new BufferedReader(new FileReader(file));
         BufferedWriter bw = new BufferedWriter(new FileWriter(out));
@@ -84,6 +107,7 @@ public class FileManager {
 
         String line = br.readLine();
         String keyTemp = "";
+        String value = "";
 
 
         while (line != null ){
@@ -95,9 +119,11 @@ public class FileManager {
                 bw.newLine();
                 bw.flush();
 
+            } else {
+                value = line.split(";")[1];
             }
 
-
+            //Change by Ebin
             line = br.readLine();
 
         }
@@ -111,28 +137,28 @@ public class FileManager {
         while (line != null ){
 
             keyTemp = line.split(";")[0];
-                cw.write(line);
-                cw.newLine();
-                cw.flush();
+            cw.write(line);
+            cw.newLine();
+            cw.flush();
 
 
-
+            //Change by Ebin
             line = cr.readLine();
 
         }
 
-
+        //Change by Ebin
         bw.close();
         br.close();
         cw.close();
         cr.close();
 
-        return  key;
+        return value;
 
     }
-/*
-In this method we check if the Key is already stored in the File and returns a boolean
- */
+
+
+
     public boolean contains(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
