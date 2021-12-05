@@ -16,10 +16,15 @@ public class EchoLogic implements CommandProcessor {
 
     private Config cfg;
     private CacheManager cacheManager;
+    private ECSManager ecsManager;
+    private boolean writerLock;
+
 
     public EchoLogic(Config config) {
         this.cfg = config;
-        cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
+        this.cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
+        this.ecsManager = new ECSManager(cfg.bootstrap, this);
+        this.writerLock = false;
     }
 
     public String process(String command) {
@@ -88,6 +93,14 @@ public class EchoLogic implements CommandProcessor {
         }
     }
 
+    public String[] getData() throws IOException {
+        return cacheManager.getData();
+    }
+
+    public void setWriterLock(boolean lock) {
+        writerLock = lock;
+    }
+
     @Override
     public String connectionAccepted(InetSocketAddress address, InetSocketAddress remoteAddress) {
         logger.info("new connection: " + remoteAddress.toString());
@@ -98,5 +111,9 @@ public class EchoLogic implements CommandProcessor {
     @Override
     public void connectionClosed(InetAddress remoteAddress) {
         logger.info("connection closed: " + remoteAddress.toString());
+    }
+
+    public String getClientPort() {
+        return cfg.listenaddr + ":" + cfg.port;
     }
 }

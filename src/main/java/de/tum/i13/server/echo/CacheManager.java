@@ -171,4 +171,8 @@ in the methode we add KV in the cache base on the remove methode that will be in
             dataCache.add(new KVPair(key, value, timeline++));
         }
     }
+
+    public String[] getData() throws IOException {
+        return file.getData();
+    }
 }

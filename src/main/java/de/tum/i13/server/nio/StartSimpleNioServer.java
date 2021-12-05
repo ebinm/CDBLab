@@ -15,11 +15,11 @@ public class StartSimpleNioServer {
     public static Logger logger = Logger.getLogger(StartSimpleNioServer.class.getName());
 
     public static void main(String[] args) throws IOException {
-        Config cfg = parseCommandlineArgs(args);  //Do not change this
+        Config cfg = parseCommandlineArgs(new String[]{"-b 127.0.0.1:5153", "-p5155"});  //Do not change this
         setupLogging(cfg.logfile);
         logger.info("Config: " + cfg.toString());
 
-        logger.info("starting server");
+        logger.info("Starting server");
 
         //Replace with your Key Value command processor
         CommandProcessor echoLogic = new EchoLogic(cfg);

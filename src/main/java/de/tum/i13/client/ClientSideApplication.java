@@ -1,24 +1,37 @@
 package de.tum.i13.client;
 
 import de.tum.i13.server.kv.KVMessage;
+import de.tum.i13.server.nio.StartSimpleNioServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.util.logging.Logger;
+
+import static de.tum.i13.shared.LogSetup.setupLogging;
 
 
 public class ClientSideApplication {
-    public static void main(String[] args)  {
 
+    public static Logger logger = Logger.getLogger(StartSimpleNioServer.class.getName());
+
+    public static void main(String[] args)  {
+        setupLogging(Path.of("client.log"));
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         CommunicationModule communicationModule = null;
+        logger.info("Started Client Application");
+
         for(;;) {
             try {
 
                 System.out.print("EchoClient> ");
                 String line = reader.readLine();
                 String[] command = line.trim().split(" ");
+
+                logger.info("Progressing command " + line);
+
                 //System.out.print("command:");
                 //System.out.println(line);
                 switch (command[0]) {
@@ -40,6 +53,8 @@ public class ClientSideApplication {
                         break;
                     case "quit":
                         printEchoLine("Application exit!");
+                        closeConnection(communicationModule);
+                        logger.info("Closing Application");
                         return;
                     default:
                         printEchoLine("Unknown command");

@@ -3,6 +3,8 @@ package de.tum.i13.server.echo;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FileManager {
 
@@ -147,5 +149,19 @@ public class FileManager {
         }
 
         return exist;
+    }
+
+    public String[] getData() throws IOException {
+        List<String> data = new LinkedList<>();
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line = br.readLine();
+
+        while (line != null) {
+            data.add(line);
+            line = br.readLine();
+        }
+
+        return data.toArray(new String[0]);
     }
 }
