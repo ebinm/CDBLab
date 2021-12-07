@@ -63,6 +63,7 @@ public class ECSLogic {
             transferFrom = serverInfoPredecessor;
 
             connectionHandleThread.write(getMetaData());
+            Thread.sleep(1000);
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
         connectionHandleThread.write("start");
