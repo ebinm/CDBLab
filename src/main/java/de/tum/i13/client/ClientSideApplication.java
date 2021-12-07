@@ -37,6 +37,7 @@ public class ClientSideApplication {
                 switch (command[0]) {
                     case "connect":
                         communicationModule = buildconnection(command);
+                        communicationModule.keyRange();
                         break;
                     //case "send": sendmessage(communicationModule, command, line); break;
                     case "put":
@@ -50,6 +51,9 @@ public class ClientSideApplication {
                         break;
                     case "help":
                         printHelp();
+                        break;
+                    case "keyrange":
+                        keyRange(communicationModule);
                         break;
                     case "quit":
                         printEchoLine("Application exit!");
@@ -87,7 +91,11 @@ public class ClientSideApplication {
             return;
         }
 
-        printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey());
+        if (kvMessage.getStatus().equals(KVMessage.StatusType.SERVER_WRITE_LOCK)) {
+            printEchoLine(kvMessage.getStatus().toString());
+        } else {
+            printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey());
+        }
     }
 
     private static void get(CommunicationModule communicationModule, String[] command) {
@@ -112,6 +120,21 @@ public class ClientSideApplication {
         }
     }
 
+    private static void keyRange(CommunicationModule communicationModule) {
+        KVMessage kvMessage;
+
+        try {
+            kvMessage = communicationModule.keyRange();
+        } catch (Exception e) {
+            printEchoLine("KEYRANGE_ERROR KeyRange command could not be executed!");
+            return;
+        }
+
+        if (kvMessage.getStatus().equals(KVMessage.StatusType.KEYRANGE_SUCCESS)) {
+            printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKeyRange());
+        }
+    }
+
     private static void printHelp() {
         System.out.println("Available commands:");
         System.out.println("connect <address> <port> - Tries to establish a TCP- connection to the echo server based on the given server address and the port number of the echo service.");
@@ -126,14 +149,14 @@ public class ClientSideApplication {
         System.out.println("EchoClient> " + msg);
     }
 
-    private static void closeConnection(ActiveConnection activeConnection) {
-        if(activeConnection != null) {
+    private static void closeConnection(CommunicationModule communicationModule) {
+        if(communicationModule != null) {
             try {
-                activeConnection.close();
+                communicationModule.close();
             } catch (Exception e) {
                 //e.printStackTrace();
                 //TODO: handle gracefully
-                activeConnection = null;
+                communicationModule = null;
             }
         }
     }
@@ -163,10 +186,11 @@ public class ClientSideApplication {
         if(command.length == 3){
             try {
                 EchoConnectionBuilder kvcb = new EchoConnectionBuilder(command[1], Integer.parseInt(command[2]));
-                CommunicationModule ac = kvcb.connect();
+                ActiveConnection ac = kvcb.connect();
+                CommunicationModule cm = new CommunicationModule(ac);
                 String confirmation = ac.readline();
                 printEchoLine(confirmation);
-                return ac;
+                return cm;
             } catch (UnknownHostException e) {
                 printEchoLine("Host " + command[1] + " is unknown");
             } catch (NumberFormatException e) {
@@ -178,4 +202,5 @@ public class ClientSideApplication {
         }
         return null;
     }
+
 }

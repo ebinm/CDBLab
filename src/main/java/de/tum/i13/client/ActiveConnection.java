@@ -2,6 +2,7 @@ package de.tum.i13.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -37,5 +38,16 @@ public class ActiveConnection implements AutoCloseable {
 
     public String getInfo() {
         return "/" + this.socket.getRemoteSocketAddress().toString();
+    }
+
+//    public void updateServer(String host, int port) throws IOException {
+//        Socket s = new Socket(host, port);
+//
+//        PrintWriter output = new PrintWriter(s.getOutputStream());
+//        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+//    }
+
+    public String getServerInfo() {
+        return socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
     }
 }

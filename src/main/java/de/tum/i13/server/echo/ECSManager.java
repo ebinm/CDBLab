@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.tum.i13.Hashing.Hashing.getHash;
+import static de.tum.i13.hashing.Hashing.getHash;
 import static de.tum.i13.server.echo.EchoLogic.logger;
 
 public class ECSManager {
@@ -81,6 +81,9 @@ public class ECSManager {
         String[] input = command.trim().split(" ");
 
         switch (input[0]) {
+            case "start":
+                echoLogic.setInitialization(false);
+                return isRunning;
             case "transfer":
                 transfer(input[2], input[3]);
                 logger.info("Transfer completed");
@@ -90,7 +93,7 @@ public class ECSManager {
                 updateRange();
                 return isRunning;
             case "transfer_all":
-                transfer(input[1], "ALL");
+                transfer(input[2], "ALL");
                 shutDown();
                 return isRunning;
             case "shutDown":
@@ -113,37 +116,44 @@ public class ECSManager {
             echoLogic.setWriterLock(true);
             String[] data = echoLogic.getData();
             List<String> toBeDeleted = new LinkedList<>();
+            logger.info(in.readLine());
 
-            if(range.equals("ALL")) {
-                logger.info("Transferring all data to server " + toServer);
+            if (data.length != 0) {
+                if (range.equals("ALL")) {
+                    logger.info("Transferring all data to server " + toServer);
 
-                for (String line : data) {
-                    String key = line.split(";")[0];
-                    String value = line.split(";")[1];
+                    for (String line : data) {
+                        String key = line.split(";")[0];
+                        String value = line.split(";")[1];
 
-                    out.write("put " + key + " " + value + "\r\n");
-                    out.flush();
-                    toBeDeleted.add(key);
-                }
-
-            } else {
-                logger.info("Transferring data in range " +  range + " to server " + toServer);
-
-                for (String line : data) {
-                    String key = line.split(";")[0];
-                    String value = line.split(";")[1];
-
-                    if (inRange(key, range)) {
-                        out.write("put " + key + " " + value + "\r\n");
-                        out.flush();
+                        out.write("transfer " + key + " " + value + "\r\n");
+                        //out.flush();
+                        //in.readLine();
                         toBeDeleted.add(key);
                     }
+                    out.flush();
+
+                } else {
+                    logger.info("Transferring data in range " + range + " to server " + toServer);
+
+                    for (String line : data) {
+                        String key = line.split(";")[0];
+                        String value = line.split(";")[1];
+
+                        if (inRange(key, range)) {
+                            out.write("transfer " + key + " " + value + "\r\n");
+                            //out.flush();
+                            //in.readLine();
+                            toBeDeleted.add(key);
+                        }
+                    }
+                    out.flush();
                 }
             }
             write("transfer_successful");
 
             for(String key: toBeDeleted) {
-                echoLogic.process("delete " + key + "\r\n");
+                echoLogic.delete(key);
             }
             echoLogic.setWriterLock(false);
 
@@ -164,17 +174,13 @@ public class ECSManager {
         isRunning = false;
     }
 
-    public void write(String message) {
+    private void write(String message) {
         writer.write(message + "\r\n");
         writer.flush();
     }
 
-    public String readLine() throws IOException {
+    private String readLine() throws IOException {
         return reader.readLine();
-    }
-
-    public Map<String, String> getMetaData() {
-        return metaData;
     }
 
     public String getMetaDataString() {
@@ -188,7 +194,7 @@ public class ECSManager {
         return metaDataMessage;
     }
 
-    public Map<String, String> convertMetaData(String metaDataString) {
+    private Map<String, String> convertMetaData(String metaDataString) {
         String[] serverData = metaDataString.split(";");
         Map<String, String> result = new HashMap<>();
 
@@ -241,8 +247,9 @@ public class ECSManager {
                     break;
                 }
             } else {
-                if ((from.compareTo(inputHash) <= 0) && ((inputHash.compareTo("ffffffffffffffffffffffffffffffff")
-                        <= 0) || (inputHash.compareTo(to) <= 0))) {
+                if (((from.compareTo(inputHash) <= 0) && (inputHash.compareTo("ffffffffffffffffffffffffffffffff") <= 0))
+                        || ((inputHash.compareTo("00000000000000000000000000000000")
+                        >= 0) && (inputHash.compareTo(to) <= 0))) {
                     break;
                 }
             }
@@ -254,6 +261,10 @@ public class ECSManager {
     private void updateRange(){
         this.currentRange = rangeOf(serverInfo);
         System.out.println("New range of server " + currentRange);
+    }
+
+    public Map<String, String> getMetaData() {
+        return metaData;
     }
 
     private String hash(String input) {

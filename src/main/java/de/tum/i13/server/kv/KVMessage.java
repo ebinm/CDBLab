@@ -12,7 +12,11 @@ public interface KVMessage {
         PUT_ERROR, 		/* Put - request not successful */
         DELETE, 		/* Delete - request */
         DELETE_SUCCESS, /* Delete - request successful */
-        DELETE_ERROR 	/* Delete - request successful */
+        DELETE_ERROR, 	/* Delete - request successful */
+        SERVER_STOPPED,
+        SERVER_NOT_RESPONSIBLE,
+        SERVER_WRITE_LOCK,
+        KEYRANGE_SUCCESS
     }
 
     /**
@@ -33,4 +37,8 @@ public interface KVMessage {
      */
     public StatusType getStatus();
 
+    /**
+     * @return the keyrange of the KVServers
+     */
+    public String getKeyRange();
 }

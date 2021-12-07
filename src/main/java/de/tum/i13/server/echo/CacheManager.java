@@ -172,7 +172,7 @@ in the methode we add KV in the cache base on the remove methode that will be in
         }
     }
 
-    public String[] getData() throws IOException {
+    public synchronized String[] getData() throws IOException {
         return file.getData();
     }
 }

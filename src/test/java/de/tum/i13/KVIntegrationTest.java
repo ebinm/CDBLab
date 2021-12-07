@@ -33,7 +33,7 @@ public class KVIntegrationTest {
         return res;
     }
 
-    @Test
+    //@Test
     public void smokeTest() throws InterruptedException, IOException {
         Thread th = new Thread() {
             @Override
@@ -56,7 +56,7 @@ public class KVIntegrationTest {
 
     }
 
-    @Test
+    //@Test
     public void enjoyTheEcho() throws IOException, InterruptedException {
         Thread th = new Thread() {
             @Override

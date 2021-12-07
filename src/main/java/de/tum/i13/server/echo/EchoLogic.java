@@ -6,8 +6,9 @@ import de.tum.i13.shared.Config;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.logging.Logger;
-
+import java.util.stream.Collectors;
 
 
 public class EchoLogic implements CommandProcessor {
@@ -18,9 +19,11 @@ public class EchoLogic implements CommandProcessor {
     private CacheManager cacheManager;
     private ECSManager ecsManager;
     private boolean writerLock;
+    private boolean initialization;
 
 
     public EchoLogic(Config config) {
+        this.initialization = true;
         this.cfg = config;
         this.cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
         this.ecsManager = new ECSManager(cfg.bootstrap, this);
@@ -29,7 +32,9 @@ public class EchoLogic implements CommandProcessor {
 
     public String process(String command) {
 
-
+        if (initialization) {
+            return "server_stopped\n";
+        }
         logger.info("received command: " + command.trim());
 
         //Let the magic happen here
@@ -37,6 +42,10 @@ public class EchoLogic implements CommandProcessor {
 
         switch (input[0]) {
             case "put":
+                if (writerLock) {
+                    return "server_write_lock\n";
+                }
+
                 logger.info("starting put operation");
                 StringBuilder value = new StringBuilder();
 
@@ -58,36 +67,74 @@ public class EchoLogic implements CommandProcessor {
                 return get(input[1]) + "\n";
 
             case "delete":
+                if (writerLock) {
+                    return "server_write_lock\n";
+                }
+
                 logger.info("starting delete operation");
                 if (input.length < 2) {
                     return "delete_error key is missing\n";
                 }
                 return delete(input[1]) + "\n";
 
+            case "transfer":
+                initialization = true;
+                logger.info("handling incoming transfer");
+
+                String[] commands = command.lines().toArray(String[]::new);
+
+                for (int j = 0; j < commands.length; j++) {
+
+                    input = commands[j].trim().split(" ");
+                    StringBuilder value1 = new StringBuilder();
+
+                    if (input.length < 3) {
+                        return "put_error key and/or value is missing\n";
+                    }
+
+                    for (int i = 2; i < input.length; i++) {
+                        value1.append(input[i]).append(" ");
+                    }
+                    value1 = new StringBuilder(value1.substring(0, value1.length() - 1));
+                    put(input[1], value1.toString());
+
+                }
+                initialization = false;
+                return "transfer_success\n";
+
+            case "keyrange":
+                return "keyrange_success " + getMetaData() + "\n";
+
             default:
                 return "error unknown command\n";
         }
     }
 
-    private String put(String key, String value){
+    public String put(String key, String value){
         try {
-            return cacheManager.put(key, value);
+            if (ecsManager.inRange(key)) {
+                return cacheManager.put(key, value);
+            } else return "server_not_responsible";
         } catch (IOException e) {
             return "put_error " + e.getMessage();
         }
     }
 
-    private String get(String key) {
+    public String get(String key) {
         try {
-            return cacheManager.get(key);
+            if (ecsManager.inRange(key)) {
+                return cacheManager.get(key);
+            } else return "server_not_responsible";
         } catch (IOException e) {
             return "get_error " + e.getMessage();
         }
     }
 
-    private String delete(String key){
+    public String delete(String key){
         try {
-            return cacheManager.delete(key);
+            if (ecsManager.inRange(key)) {
+                return cacheManager.delete(key);
+            } else return "server_not_responsible";
         } catch (IOException e) {
             return "delete_error " + e.getMessage();
         }
@@ -115,5 +162,13 @@ public class EchoLogic implements CommandProcessor {
 
     public String getClientPort() {
         return cfg.listenaddr + ":" + cfg.port;
+    }
+
+    private String getMetaData() {
+        return ecsManager.getMetaDataString();
+    }
+
+    public void setInitialization(boolean initialization) {
+        this.initialization = initialization;
     }
 }

@@ -31,7 +31,7 @@ public class Tests {
         return res;
     }
 
-    @Test
+    //@Test
     public void connectTest() throws InterruptedException, IOException {
         Thread th = new Thread() {
             @Override
@@ -55,7 +55,7 @@ public class Tests {
         assertEquals(line, shouldBe);
     }
 
-    @Test
+    //@Test
     public void putGetDeleteTest() throws IOException, InterruptedException {
         Thread th = new Thread() {
             @Override
@@ -91,7 +91,7 @@ public class Tests {
 
     }
 
-    @Test
+    //@Test
     public void persistentTest() throws IOException, InterruptedException {
         Thread th = new Thread() {
             @Override

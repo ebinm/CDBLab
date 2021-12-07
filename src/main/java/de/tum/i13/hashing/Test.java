@@ -1,6 +1,4 @@
-package de.tum.i13.Hashing;
-
-import java.io.IOException;
+package de.tum.i13.hashing;
 
 public class Test {
 

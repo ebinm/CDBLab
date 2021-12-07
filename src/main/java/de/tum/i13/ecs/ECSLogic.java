@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.tum.i13.Hashing.Hashing.getHash;
+import static de.tum.i13.hashing.Hashing.getHash;
 import static de.tum.i13.ecs.StartECSServer.LOGGER;
 
 public class ECSLogic {
@@ -25,7 +25,18 @@ public class ECSLogic {
         String rangeCurrent = "";
 
         if (metaData.isEmpty()) {
-            metaData.put("00000000000000000000000000000000-ffffffffffffffffffffffffffffffff", serverInfo);
+            String serverHash = hash(serverInfo);
+            String to = serverHash;
+            String from = (new BigInteger(serverHash, 16)).add(BigInteger.ONE).
+                    mod(new BigInteger("100000000000000000000000000000000", 16)).toString(16);
+
+            if (from.length() < 32) {
+                while (from.length() < 32) {
+                    from = "0" + from;
+                }
+            }
+            rangeCurrent = from + "-" + to;
+            metaData.put(rangeCurrent, serverInfo);
             connectionHandleThread.write(getMetaData());
         } else {
             String serverHash = hash(serverInfo);
@@ -35,6 +46,12 @@ public class ECSLogic {
 
             String predecessorFrom = (new BigInteger(serverHash, 16)).add(BigInteger.ONE).
                     mod(new BigInteger("100000000000000000000000000000000", 16)).toString(16);
+
+            if (predecessorFrom.length() < 32) {
+                while (predecessorFrom.length() < 32) {
+                    predecessorFrom = "0" + predecessorFrom;
+                }
+            }
             String predecessorTo = to;
             String rangePredecessor = predecessorFrom + "-" + predecessorTo;
             rangeCurrent = from + "-" + serverHash;
@@ -47,9 +64,7 @@ public class ECSLogic {
             connectionHandleThread.write(getMetaData());
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
-
-
-
+        connectionHandleThread.write("start");
     }
 
     public synchronized void transfer(String fromServer, String toServer, String range) {
@@ -62,7 +77,6 @@ public class ECSLogic {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        writeAllServers(getMetaData());
     }
 
     public synchronized String shutDown(String serverInfo) {
@@ -72,9 +86,16 @@ public class ECSLogic {
             String serverHash = hash(serverInfo);
             String currentRange = rangeOf(serverInfo);
             String predecessorUpdatedRange = currentRange.split("-")[0] + "-";
+
             String predecessorFrom = (new BigInteger(serverHash, 16)).add(BigInteger.ONE).
                     mod(new BigInteger("100000000000000000000000000000000", 16)).toString(16);
-            String predecessorRange = rangeOf(predecessorFrom);
+
+            if (predecessorFrom.length() < 32) {
+                while (predecessorFrom.length() < 32) {
+                    predecessorFrom = "0" + predecessorFrom;
+                }
+            }
+            String predecessorRange = rangeOfHash(predecessorFrom);
             predecessorUpdatedRange += predecessorRange.split("-")[1];
             String predecessorServerInfo = metaData.remove(predecessorRange);
             metaData.put(predecessorUpdatedRange, predecessorServerInfo);
@@ -85,6 +106,7 @@ public class ECSLogic {
             ConnectionHandleThread connectionHandleThread = connections.get(predecessorServerInfo);
             connectionHandleThread.write("update_metaData " + getMetaData());
 
+            LOGGER.info("Transfering all data from " + serverInfo + " to " + predecessorServerInfo);
             return "transfer_all " + serverInfo + " " + predecessorServerInfo;
         } else {
             String currentRange = rangeOf(serverInfo);
@@ -114,9 +136,7 @@ public class ECSLogic {
         writeAllServers("update_metaData " + getMetaData());
     }
 
-    private String rangeOf(String input) {
-
-        String inputHash = hash(input);
+    private String rangeOfHash(String inputHash) {
 
         String from = "";
         String to = "";
@@ -130,14 +150,22 @@ public class ECSLogic {
                     break;
                 }
             } else {
-                if ((from.compareTo(inputHash) <= 0) && ((inputHash.compareTo("ffffffffffffffffffffffffffffffff")
-                        <= 0) || (inputHash.compareTo(to) <= 0))) {
+                if (((from.compareTo(inputHash) <= 0) && (inputHash.compareTo("ffffffffffffffffffffffffffffffff") <= 0))
+                        || ((inputHash.compareTo("00000000000000000000000000000000")
+                        >= 0) && (inputHash.compareTo(to) <= 0))) {
                     break;
                 }
             }
         }
 
         return from + "-" + to;
+    }
+
+    private String rangeOf(String input) {
+
+        String inputHash = hash(input);
+
+        return rangeOfHash(inputHash);
     }
 
     private String hash(String input) {

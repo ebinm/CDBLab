@@ -23,4 +23,11 @@ public interface KVStore {
      */
     public KVMessage get(String key) throws Exception;
 
+    /**
+     *
+     * @return the keyrange of the KVServers
+     * @throws Exception if keyRange command cannot be executed (e.g. not connected to any
+     *      *                   KV server).
+     */
+    public KVMessage keyRange() throws Exception;
 }

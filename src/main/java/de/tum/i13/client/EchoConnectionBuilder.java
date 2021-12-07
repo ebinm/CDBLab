@@ -19,12 +19,12 @@ public class EchoConnectionBuilder {
         this.port = port;
     }
 
-    public CommunicationModule connect() throws IOException {
+    public ActiveConnection connect() throws IOException {
         Socket s = new Socket(this.host, this.port);
 
         PrintWriter output = new PrintWriter(s.getOutputStream());
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
-        return new CommunicationModule(s, output, input);
+        return new ActiveConnection(s, output, input);
     }
 }
