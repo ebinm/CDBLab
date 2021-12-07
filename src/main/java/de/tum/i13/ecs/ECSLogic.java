@@ -15,8 +15,9 @@ public class ECSLogic {
     Map<String, String> metaData = new HashMap<>();
     //Map Serverinfo to CommunicationThread
     Map<String, ConnectionHandleThread> connections = new HashMap<>();
+    volatile boolean removingServer = false;
 
-    public synchronized void add(String serverInfo, ConnectionHandleThread connectionHandleThread) {
+    public synchronized void add(String serverInfo, ConnectionHandleThread connectionHandleThread) throws InterruptedException {
         LOGGER.info("Adding new Server " + serverInfo + " to the storage system");
 
         connections.put(serverInfo, connectionHandleThread);
@@ -62,6 +63,7 @@ public class ECSLogic {
             transferFrom = serverInfoPredecessor;
 
             connectionHandleThread.write(getMetaData());
+            Thread.sleep(1000);
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
         connectionHandleThread.write("start");
@@ -81,6 +83,10 @@ public class ECSLogic {
 
     public synchronized String shutDown(String serverInfo) {
         LOGGER.info("Shutting down server " + serverInfo);
+        while (removingServer) {
+            Thread.onSpinWait();
+        }
+        setRemovingServer(true);
 
         if (metaData.size() > 1) {
             String serverHash = hash(serverInfo);
@@ -170,5 +176,9 @@ public class ECSLogic {
 
     private String hash(String input) {
         return getHash(input);
+    }
+
+    public void setRemovingServer(boolean removingServer) {
+        this.removingServer = removingServer;
     }
 }

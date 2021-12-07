@@ -57,6 +57,7 @@ public class ConnectionHandleThread extends Thread {
                 write(output);
                 return true;
             case "shutDown_successful":
+                ecsLogic.setRemovingServer(false);
                 shutDown();
                 return false;
             default:
