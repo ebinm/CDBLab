@@ -16,7 +16,6 @@ public class ECSLogic {
     //Map Serverinfo to CommunicationThread
     Map<String, ConnectionHandleThread> connections = new HashMap<>();
     volatile boolean removingServer = false;
-    volatile boolean serverReady = false;
 
     public synchronized void add(String serverInfo, ConnectionHandleThread connectionHandleThread) throws InterruptedException {
         LOGGER.info("Adding new Server " + serverInfo + " to the storage system");
@@ -64,12 +63,9 @@ public class ECSLogic {
             transferFrom = serverInfoPredecessor;
 
             connectionHandleThread.write(getMetaData());
-            while (!serverReady) {
-                Thread.onSpinWait();
-            };
+            Thread.sleep(100);
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
-        serverReady = false;
         connectionHandleThread.write("start");
     }
 
@@ -184,9 +180,5 @@ public class ECSLogic {
 
     public void setRemovingServer(boolean removingServer) {
         this.removingServer = removingServer;
-    }
-
-    public void setServerReady(boolean serverReady) {
-        this.serverReady = serverReady;
     }
 }
