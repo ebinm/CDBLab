@@ -74,6 +74,7 @@ public class ECSLogic {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            Thread.sleep(20);
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
         connectionHandleThread.write("start");
