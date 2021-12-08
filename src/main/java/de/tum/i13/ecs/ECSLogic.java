@@ -39,6 +39,11 @@ public class ECSLogic {
             rangeCurrent = from + "-" + to;
             metaData.put(rangeCurrent, serverInfo);
             connectionHandleThread.write(getMetaData());
+            try {
+                connectionHandleThread.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             String serverHash = hash(serverInfo);
             String rangeTemp = rangeOf(serverInfo);
@@ -63,7 +68,12 @@ public class ECSLogic {
             transferFrom = serverInfoPredecessor;
 
             connectionHandleThread.write(getMetaData());
-            Thread.sleep(100);
+            try {
+                connectionHandleThread.readLine();
+                LOGGER.info("Server ready for transfer");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
         connectionHandleThread.write("start");

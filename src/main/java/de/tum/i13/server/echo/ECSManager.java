@@ -56,6 +56,7 @@ public class ECSManager {
         System.out.println("Range of the server " + currentRange);
         this.isRunning = true;
         readThread.start();
+        write("server_ready");
     }
 
     private Map<String, String>  configureServer(InetSocketAddress bootstrap) throws IOException {
