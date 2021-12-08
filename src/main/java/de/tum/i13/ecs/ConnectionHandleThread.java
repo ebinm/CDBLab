@@ -60,6 +60,9 @@ public class ConnectionHandleThread extends Thread {
                 ecsLogic.setRemovingServer(false);
                 shutDown();
                 return false;
+            case "server_ready":
+                ecsLogic.setServerReady(true);
+                return true;
             default:
                 throw new RuntimeException("unknown command");
         }
