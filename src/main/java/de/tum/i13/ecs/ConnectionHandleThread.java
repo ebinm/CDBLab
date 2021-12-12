@@ -82,6 +82,7 @@ public class ConnectionHandleThread extends Thread {
     public void bruteForceShutDown() {
         ecsLogic.shutDown(serverInfo);
         ecsLogic.setRemovingServer(false);
+        ecsLogic.sendMetaDataToAll();
         shutDown();
     }
 
