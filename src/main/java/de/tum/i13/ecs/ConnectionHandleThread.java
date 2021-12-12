@@ -12,6 +12,7 @@ public class ConnectionHandleThread extends Thread {
     private ECSLogic ecsLogic;
     private Socket clientSocket;
     private ReadThread readThread;
+    private PingThread pingThread;
     private String serverInfo;
     private ActiveConnection activeConnection;
 
@@ -36,6 +37,9 @@ public class ConnectionHandleThread extends Thread {
             this.readThread = new ReadThread(in, this);
             readThread.start();
 
+            this.pingThread = new PingThread(clientSocket.getInetAddress(), this);
+            pingThread.start();
+
             System.out.println("Added Server " + serverInfo + " to the storage service");
 
         } catch(Exception ex) {
@@ -43,7 +47,7 @@ public class ConnectionHandleThread extends Thread {
         }
     }
 
-    public boolean process(String command) throws IOException {
+    public void process(String command) throws IOException {
         logger.info("received command: " + command.trim());
 
         String[] input = command.trim().split(" ");
@@ -51,15 +55,15 @@ public class ConnectionHandleThread extends Thread {
         switch (input[0]) {
             case "transfer_successful":
                 ecsLogic.sendMetaDataToAll();
-                return true;
+                return;
             case "initialize_shutdown":
                 String output = ecsLogic.shutDown(serverInfo);
                 write(output);
-                return true;
+                return;
             case "shutDown_successful":
                 ecsLogic.setRemovingServer(false);
                 shutDown();
-                return false;
+                return;
             default:
                 throw new RuntimeException("unknown command");
         }
@@ -68,9 +72,17 @@ public class ConnectionHandleThread extends Thread {
     private void shutDown() {
         try {
             activeConnection.close();
+            readThread.close();
+            pingThread.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void bruteForceShutDown() {
+        ecsLogic.shutDown(serverInfo);
+        ecsLogic.setRemovingServer(false);
+        shutDown();
     }
 
     public void transfer(String fromServer, String toServer, String range) throws IOException {

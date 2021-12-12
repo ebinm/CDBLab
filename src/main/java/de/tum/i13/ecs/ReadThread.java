@@ -2,33 +2,36 @@ package de.tum.i13.ecs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
 
 public class ReadThread extends Thread {
     private BufferedReader reader;
-    private Socket socket;
     private ConnectionHandleThread connectionHandleThread;
+    private boolean isRunning;
 
     public ReadThread(BufferedReader bufferedReader, ConnectionHandleThread connectionHandleThread) {
-        this.socket = socket;
         this.connectionHandleThread = connectionHandleThread;
         this.reader = bufferedReader;
     }
 
     public void run() {
 
-        boolean run = true;
-        while (run) {
+        isRunning = true;
             try {
-                String response = reader.readLine();
-                run = connectionHandleThread.process(response);
+                String input;
+                while (isRunning && (input = reader.readLine()) != null) {
+                    connectionHandleThread.process(input);
+                }
             } catch (IOException ex) {
                 System.out.println("Error reading from server: " + ex.getMessage());
                 ex.printStackTrace();
-                break;
             }
-        }
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    public void close() {
+        setRunning(false);
     }
 }

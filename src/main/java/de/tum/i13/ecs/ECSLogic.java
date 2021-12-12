@@ -74,7 +74,7 @@ public class ECSLogic {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Thread.sleep(20);
+            Thread.sleep(20); //A little buffer to set up the new EchoServer
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
         connectionHandleThread.write("start");
@@ -132,6 +132,7 @@ public class ECSLogic {
             return "shutDown";
         }
     }
+
 
     public synchronized String getMetaData() {
         String metaDataMessage = "";
