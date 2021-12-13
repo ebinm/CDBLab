@@ -1,4 +1,16 @@
 -------------------------------------------------------------------------------
 Test set: de.tum.i13.Tests
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.139 s - in de.tum.i13.Tests
+Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 12.175 s <<< FAILURE! - in de.tum.i13.Tests
+putGetDeleteTest  Time elapsed: 4.047 s  <<< ERROR!
+java.net.ConnectException: Connection refused: connect
+	at de.tum.i13.Tests.putGetDeleteTest(Tests.java:74)
+
+persistentTest  Time elapsed: 4.07 s  <<< ERROR!
+java.net.ConnectException: Connection refused: connect
+	at de.tum.i13.Tests.persistentTest(Tests.java:110)
+
+connectTest  Time elapsed: 4.058 s  <<< ERROR!
+java.net.ConnectException: Connection refused: connect
+	at de.tum.i13.Tests.connectTest(Tests.java:50)
+

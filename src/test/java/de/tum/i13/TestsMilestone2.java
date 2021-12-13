@@ -8,7 +8,7 @@ import java.net.Socket;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Tests {
+public class TestsMilestone2 {
 
     private PrintWriter output;
     private BufferedReader input;

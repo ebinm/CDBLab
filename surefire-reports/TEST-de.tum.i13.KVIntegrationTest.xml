@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.tum.i13.KVIntegrationTest" time="9.14" tests="2" errors="0" skipped="0" failures="1">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.tum.i13.KVIntegrationTest" time="11.172" tests="2" errors="1" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="14"/>
     <property name="sun.cpu.isalist" value="amd64"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.class.path" value="D:\Dokumente\Universität\CDB\milestone2_base\target\test-classes;D:\Dokumente\Universität\CDB\milestone2_base\target\classes;C:\Users\madan\.m2\repository\info\picocli\picocli\4.0.4\picocli-4.0.4.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.5.2\junit-jupiter-engine-5.5.2.jar;C:\Users\madan\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-engine\1.5.2\junit-platform-engine-1.5.2.jar;C:\Users\madan\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-commons\1.5.2\junit-platform-commons-1.5.2.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.5.2\junit-jupiter-api-5.5.2.jar;C:\Users\madan\.m2\repository\org\mockito\mockito-core\3.1.0\mockito-core-3.1.0.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy\1.9.10\byte-buddy-1.9.10.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy-agent\1.9.10\byte-buddy-agent-1.9.10.jar;C:\Users\madan\.m2\repository\org\objenesis\objenesis\2.6\objenesis-2.6.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-library\2.2-rc1\hamcrest-library-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-core\2.2-rc1\hamcrest-core-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest\2.2-rc1\hamcrest-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1-win.jar;"/>
+    <property name="java.class.path" value="D:\Dokumente\Universität\CDB\milestone2_base\target\test-classes;D:\Dokumente\Universität\CDB\milestone2_base\target\classes;C:\Users\madan\.m2\repository\info\picocli\picocli\4.0.4\picocli-4.0.4.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.5.2\junit-jupiter-engine-5.5.2.jar;C:\Users\madan\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-engine\1.5.2\junit-platform-engine-1.5.2.jar;C:\Users\madan\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-commons\1.5.2\junit-platform-commons-1.5.2.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.5.2\junit-jupiter-api-5.5.2.jar;C:\Users\madan\.m2\repository\org\mockito\mockito-core\3.1.0\mockito-core-3.1.0.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy\1.9.10\byte-buddy-1.9.10.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy-agent\1.9.10\byte-buddy-agent-1.9.10.jar;C:\Users\madan\.m2\repository\org\objenesis\objenesis\2.6\objenesis-2.6.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-library\2.2-rc1\hamcrest-library-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-core\2.2-rc1\hamcrest-core-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest\2.2-rc1\hamcrest-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1-win.jar;C:\Users\madan\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\2.3.3\jakarta.xml.bind-api-2.3.3.jar;C:\Users\madan\.m2\repository\jakarta\activation\jakarta.activation-api\1.2.2\jakarta.activation-api-1.2.2.jar;"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="user.variant" value=""/>
@@ -15,9 +15,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="DE"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-14.0.1\bin"/>
-    <property name="sun.java.command" value="C:\Users\madan\AppData\Local\Temp\surefire3891916970017873127\surefirebooter8124917444231371638.jar C:\Users\madan\AppData\Local\Temp\surefire3891916970017873127 2021-11-20T16-03-11_428-jvmRun1 surefire8331914927777521583tmp surefire_013401871162229501595tmp"/>
+    <property name="sun.java.command" value="C:\Users\madan\AppData\Local\Temp\surefire5516192991579704468\surefirebooter2897035180837455078.jar C:\Users\madan\AppData\Local\Temp\surefire5516192991579704468 2021-12-07T21-05-27_338-jvmRun1 surefire3574089758017394874tmp surefire_016728155837345733156tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="D:\Dokumente\Universität\CDB\milestone2_base\target\test-classes;D:\Dokumente\Universität\CDB\milestone2_base\target\classes;C:\Users\madan\.m2\repository\info\picocli\picocli\4.0.4\picocli-4.0.4.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.5.2\junit-jupiter-engine-5.5.2.jar;C:\Users\madan\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-engine\1.5.2\junit-platform-engine-1.5.2.jar;C:\Users\madan\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-commons\1.5.2\junit-platform-commons-1.5.2.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.5.2\junit-jupiter-api-5.5.2.jar;C:\Users\madan\.m2\repository\org\mockito\mockito-core\3.1.0\mockito-core-3.1.0.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy\1.9.10\byte-buddy-1.9.10.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy-agent\1.9.10\byte-buddy-agent-1.9.10.jar;C:\Users\madan\.m2\repository\org\objenesis\objenesis\2.6\objenesis-2.6.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-library\2.2-rc1\hamcrest-library-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-core\2.2-rc1\hamcrest-core-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest\2.2-rc1\hamcrest-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1-win.jar;"/>
+    <property name="surefire.test.class.path" value="D:\Dokumente\Universität\CDB\milestone2_base\target\test-classes;D:\Dokumente\Universität\CDB\milestone2_base\target\classes;C:\Users\madan\.m2\repository\info\picocli\picocli\4.0.4\picocli-4.0.4.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.5.2\junit-jupiter-engine-5.5.2.jar;C:\Users\madan\.m2\repository\org\apiguardian\apiguardian-api\1.1.0\apiguardian-api-1.1.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-engine\1.5.2\junit-platform-engine-1.5.2.jar;C:\Users\madan\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\madan\.m2\repository\org\junit\platform\junit-platform-commons\1.5.2\junit-platform-commons-1.5.2.jar;C:\Users\madan\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.5.2\junit-jupiter-api-5.5.2.jar;C:\Users\madan\.m2\repository\org\mockito\mockito-core\3.1.0\mockito-core-3.1.0.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy\1.9.10\byte-buddy-1.9.10.jar;C:\Users\madan\.m2\repository\net\bytebuddy\byte-buddy-agent\1.9.10\byte-buddy-agent-1.9.10.jar;C:\Users\madan\.m2\repository\org\objenesis\objenesis\2.6\objenesis-2.6.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-library\2.2-rc1\hamcrest-library-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest-core\2.2-rc1\hamcrest-core-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\hamcrest\hamcrest\2.2-rc1\hamcrest-2.2-rc1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1.jar;C:\Users\madan\.m2\repository\org\openjfx\javafx-base\14.0.1\javafx-base-14.0.1-win.jar;C:\Users\madan\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\2.3.3\jakarta.xml.bind-api-2.3.3.jar;C:\Users\madan\.m2\repository\jakarta\activation\jakarta.activation-api\1.2.2\jakarta.activation-api-1.2.2.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\madan"/>
     <property name="user.language" value="de"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\madan\AppData\Local\Temp\surefire3891916970017873127\surefirebooter8124917444231371638.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\madan\AppData\Local\Temp\surefire5516192991579704468\surefirebooter2897035180837455078.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="14.0.1+7"/>
@@ -56,20 +56,22 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="58.0"/>
   </properties>
-  <testcase name="smokeTest" classname="de.tum.i13.KVIntegrationTest" time="2.06">
-    <failure message="&#10;Expected: is &quot;hello &quot;&#10;     but: was &quot;Connection to MSRG Echo server established: /127.0.0.1:5153&quot;" type="java.lang.AssertionError">java.lang.AssertionError: 
-
-Expected: is "hello "
-     but: was "Connection to MSRG Echo server established: /127.0.0.1:5153"
-	at de.tum.i13.KVIntegrationTest.smokeTest(KVIntegrationTest.java:54)
-</failure>
-    <system-err><![CDATA[2021-11-20 16:03:13.054 INFO    [de.tum.i13.server.nio.StartSimpleNioServer] Config: Config{port=5153, listenaddr='127.0.0.1', bootstrap=clouddatabases.i13.in.tum.de/<unresolved>:5153, dataDir=data, logfile=echo.log, usagehelp=false} 
-2021-11-20 16:03:13.087 INFO    [de.tum.i13.server.nio.StartSimpleNioServer] starting server 
-2021-11-20 16:03:14.674 INFO    [de.tum.i13.server.echo.EchoLogic] new connection: /127.0.0.1:64548 
-2021-11-20 16:03:14.680 INFO    [de.tum.i13.server.echo.EchoLogic] new connection: /127.0.0.1:64549 
-2021-11-20 16:03:14.683 INFO    [de.tum.i13.server.echo.EchoLogic] received command: hello 
-2021-11-20 16:03:14.687 INFO    [de.tum.i13.server.echo.EchoLogic] connection closed: /127.0.0.1 
+  <testcase name="smokeTest" classname="de.tum.i13.KVIntegrationTest" time="4.109">
+    <error message="Connection refused: connect" type="java.net.ConnectException">java.net.ConnectException: Connection refused: connect
+	at de.tum.i13.KVIntegrationTest.smokeTest(KVIntegrationTest.java:52)
+</error>
+    <system-err><![CDATA[2021-12-07 21:05:29.758 INFO    [de.tum.i13.server.nio.StartSimpleNioServer] Config: Config{port=5153, listenaddr='127.0.0.1', bootstrap=clouddatabases.i13.in.tum.de/<unresolved>:5153, dataDir=data, logfile=echo.log, usagehelp=false} 
+2021-12-07 21:05:29.774 INFO    [de.tum.i13.server.nio.StartSimpleNioServer] Starting server 
+2021-12-07 21:05:29.774 INFO    [de.tum.i13.server.echo.EchoLogic] Setting up connection to ECS 
+Exception in thread "Thread-0" java.lang.NullPointerException
+	at java.base/java.net.Socket.<init>(Socket.java:514)
+	at java.base/java.net.Socket.<init>(Socket.java:328)
+	at de.tum.i13.server.echo.ECSManager.configureServer(ECSManager.java:65)
+	at de.tum.i13.server.echo.ECSManager.<init>(ECSManager.java:31)
+	at de.tum.i13.server.echo.EchoLogic.<init>(EchoLogic.java:29)
+	at de.tum.i13.server.nio.StartSimpleNioServer.main(StartSimpleNioServer.java:26)
+	at de.tum.i13.KVIntegrationTest$1.run(KVIntegrationTest.java:42)
 ]]></system-err>
   </testcase>
-  <testcase name="enjoyTheEcho" classname="de.tum.i13.KVIntegrationTest" time="7.068"/>
+  <testcase name="enjoyTheEcho" classname="de.tum.i13.KVIntegrationTest" time="7.031"/>
 </testsuite>

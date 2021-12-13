@@ -44,8 +44,13 @@ public class ECSManager {
                 if(isRunning) {
                     System.out.print("Shutting down server");
                     write("initialize_shutdown");
+                    int x = 0;
                     while (isRunning) {
                         System.out.print(".");
+                        if (x > 2000) {
+                            throw new RuntimeException("Could not close KVServer properly");
+                        }
+                        x++;
                     }
                     System.out.println(".");
                     System.out.println("Shut down completed!");
