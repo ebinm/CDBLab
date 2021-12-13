@@ -29,7 +29,7 @@ public class PingThread extends Thread {
         }
 
         if (!isReachable) {
-            connectionHandleThread.bruteForceShutDown();
+            //connectionHandleThread.bruteForceShutDown();
         }
     }
 
