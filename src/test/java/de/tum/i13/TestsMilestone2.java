@@ -1,5 +1,6 @@
 package de.tum.i13;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -31,13 +32,27 @@ public class TestsMilestone2 {
         return res;
     }
 
-    //@Test
+    @BeforeAll
+    static void setUpECS() {
+        Thread th = new Thread() {
+            public void run() {
+                try {
+                    de.tum.i13.ecs.StartECSServer.main(new String[]{"-b 127.0.0.1:5153"});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        th.start();
+    }
+
+    @Test
     public void connectTest() throws InterruptedException, IOException {
         Thread th = new Thread() {
             @Override
             public void run() {
                 try {
-                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
+                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:5153", "-p3154"});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -47,21 +62,21 @@ public class TestsMilestone2 {
         Thread.sleep(2000);
 
         Socket s = new Socket();
-        s.connect(new InetSocketAddress("127.0.0.1", port));
+        s.connect(new InetSocketAddress("127.0.0.1", 3154));
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
         String line = input.readLine();
-        String shouldBe = "Connection to MSRG Echo server established: /127.0.0.1:5153";
+        String shouldBe = "Connection to MSRG Echo server established: /127.0.0.1:3154";
         s.close();
         assertEquals(line, shouldBe);
     }
 
-    //@Test
+    @Test
     public void putGetDeleteTest() throws IOException, InterruptedException {
         Thread th = new Thread() {
             @Override
             public void run() {
                 try {
-                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
+                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:5153", "-p3155"});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -71,33 +86,33 @@ public class TestsMilestone2 {
         Thread.sleep(2000);
 
         Socket s = new Socket();
-        s.connect(new InetSocketAddress("127.0.0.1", port));
+        s.connect(new InetSocketAddress("127.0.0.1", 3155));
         this.output = new PrintWriter(s.getOutputStream());
         this.input = new BufferedReader(new InputStreamReader(s.getInputStream()));
         input.readLine();
 
         String request = "put test value";
         String shouldBe = "put_success test";
-        assertEquals(doRequest(request), shouldBe);
+        assertEquals(doRequest(s, request), shouldBe);
 
         request = "get test";
         shouldBe = "get_success test value";
-        assertEquals(doRequest(request), shouldBe);
+        assertEquals(doRequest(s, request), shouldBe);
 
         request = "delete test";
         shouldBe = "delete_success test";
-        assertEquals(doRequest(request), shouldBe);
+        assertEquals(doRequest(s, request), shouldBe);
         s.close();
 
     }
 
-    //@Test
+    @Test
     public void persistentTest() throws IOException, InterruptedException {
         Thread th = new Thread() {
             @Override
             public void run() {
                 try {
-                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
+                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:5153", "-p3156"});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -107,20 +122,20 @@ public class TestsMilestone2 {
         Thread.sleep(2000);
 
         Socket s = new Socket();
-        s.connect(new InetSocketAddress("127.0.0.1", port));
+        s.connect(new InetSocketAddress("127.0.0.1", 3156));
         this.output = new PrintWriter(s.getOutputStream());
         this.input = new BufferedReader(new InputStreamReader(s.getInputStream()));
         input.readLine();
 
         String request = "put test value";
-        doRequest(request);
+        doRequest(s, request);
 
 
         Thread th2 = new Thread() {
             @Override
             public void run() {
                 try {
-                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{});
+                    de.tum.i13.server.nio.StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:5153", "-p3157"});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -131,9 +146,9 @@ public class TestsMilestone2 {
 
         request = "get test";
         String shouldBe = "get_success test value";
-        assertEquals(doRequest(request), shouldBe);
+        assertEquals(doRequest(s, request), shouldBe);
 
-        doRequest("delete test");
+        doRequest(s, "delete test");
         s.close();
     }
 }

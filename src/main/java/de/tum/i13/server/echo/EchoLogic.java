@@ -171,4 +171,8 @@ public class EchoLogic implements CommandProcessor {
     public void setInitialization(boolean initialization) {
         this.initialization = initialization;
     }
+
+    public ECSManager getEcsManager() {
+        return ecsManager;
+    }
 }
