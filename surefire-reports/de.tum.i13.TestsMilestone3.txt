@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: de.tum.i13.TestsMilestone3
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 1, Errors: 1, Skipped: 0, Time elapsed: 3.051 s <<< FAILURE! - in de.tum.i13.TestsMilestone3
+testTransfer_all  Time elapsed: 0.696 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <get_success Test Transfer> but was: <server_not_responsible>
+	at de.tum.i13.TestsMilestone3.testTransfer_all(TestsMilestone3.java:173)
+
+testShutDown  Time elapsed: 2.006 s  <<< ERROR!
+java.lang.NullPointerException
+	at de.tum.i13.TestsMilestone3.testShutDown(TestsMilestone3.java:197)
+

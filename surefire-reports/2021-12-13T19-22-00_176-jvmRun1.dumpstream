@@ -1,0 +1,33 @@
+# Created at 2021-12-13T19:22:40.165
+TestSet has not finished before stream error has appeared >> initializing exit by non-null configuration: null
+java.io.EOFException
+	at java.base/java.io.DataInputStream.readInt(DataInputStream.java:396)
+	at org.apache.maven.surefire.booter.MasterProcessCommand.decode(MasterProcessCommand.java:115)
+	at org.apache.maven.surefire.booter.CommandReader$CommandRunnable.run(CommandReader.java:391)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+
+
+# Created at 2021-12-13T19:22:50.755
+Unexpected IOException with stream: 2021-12-13 19:22:50.755 INFO    [de.tum.i13.ecs.StartECSServer] Handling new Server in new Thread 
+
+
+# Created at 2021-12-13T19:22:50.755
+Unexpected IOException with stream: 2021-12-13 19:22:50.755 INFO    [de.tum.i13.server.threadperconnection.Main] New Thread Thread-22 is running 
+
+
+# Created at 2021-12-13T19:23:03.814
+Unexpected IOException with stream: 2021-12-13 19:23:03.814 INFO    [de.tum.i13.ecs.StartECSServer] Handling new Server in new Thread 
+
+
+# Created at 2021-12-13T19:23:03.830
+Unexpected IOException with stream: 2021-12-13 19:23:03.830 INFO    [de.tum.i13.server.threadperconnection.Main] New Thread Thread-23 is running 
+
+
+# Created at 2021-12-13T19:23:18.533
+Unexpected IOException with stream: 2021-12-13 19:23:18.533 INFO    [de.tum.i13.ecs.StartECSServer] Handling new Server in new Thread 
+
+
+# Created at 2021-12-13T19:23:18.533
+Unexpected IOException with stream: 2021-12-13 19:23:18.533 INFO    [de.tum.i13.server.threadperconnection.Main] New Thread Thread-24 is running 
+
+

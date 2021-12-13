@@ -19,7 +19,6 @@ public class ConnectionHandleThread extends Thread {
     public ConnectionHandleThread(ECSLogic ecsLogic, Socket clientSocket) {
         this.ecsLogic = ecsLogic;
         this.clientSocket = clientSocket;
-
     }
 
     @Override
