@@ -28,7 +28,7 @@ public class PingThread extends Thread {
             e.printStackTrace();
         }
 
-        if (!isReachable) {
+        if (!isReachable && isRunning) {
             connectionHandleThread.bruteForceShutDown();
         }
     }
