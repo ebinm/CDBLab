@@ -47,7 +47,7 @@ public class ECSManager {
                     int x = 0;
                     while (isRunning) {
                         System.out.print(".");
-                        if (x > 2000) {
+                        if (x > 10000) {
                             throw new RuntimeException("Could not close KVServer properly");
                         }
                         x++;
