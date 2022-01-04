@@ -92,6 +92,52 @@ public class ECSLogic {
         }
     }
 
+    public synchronized void bruteForceShutDown(String serverInfo) {
+
+        LOGGER.info("Shutting down server ungracefully " + serverInfo);
+        while (removingServer) {
+            Thread.onSpinWait();
+        }
+        setRemovingServer(true);
+
+        if (metaData.size() > 1) {
+            String serverHash = hash(serverInfo);
+            String currentRange = rangeOf(serverInfo);
+            String predecessorUpdatedRange = currentRange.split("-")[0] + "-";
+
+            String predecessorFrom = (new BigInteger(serverHash, 16)).add(BigInteger.ONE).
+                    mod(new BigInteger("100000000000000000000000000000000", 16)).toString(16);
+
+            if (predecessorFrom.length() < 32) {
+                while (predecessorFrom.length() < 32) {
+                    predecessorFrom = "0" + predecessorFrom;
+                }
+            }
+            String predecessorRange = rangeOfHash(predecessorFrom);
+            predecessorUpdatedRange += predecessorRange.split("-")[1];
+            String predecessorServerInfo = metaData.remove(predecessorRange);
+            metaData.put(predecessorUpdatedRange, predecessorServerInfo);
+
+            metaData.remove(currentRange);
+            connections.remove(serverInfo);
+
+            if (metaData.size() < 3) {
+                sendMetaDataToAll();
+            } else {
+                ConnectionHandleThread connectionHandleThread = connections.get(predecessorServerInfo);
+                connectionHandleThread.write("update_metaData " + getMetaData());
+
+                LOGGER.info("Reconstructing data on server " + predecessorServerInfo);
+                connectionHandleThread.write("reconstruct_data");
+            }
+        } else {
+            String currentRange = rangeOf(serverInfo);
+            metaData.remove(currentRange);
+            connections.remove(serverInfo);
+            sendMetaDataToAll();
+        }
+    }
+
     public synchronized String shutDown(String serverInfo) {
         LOGGER.info("Shutting down server " + serverInfo);
         while (removingServer) {

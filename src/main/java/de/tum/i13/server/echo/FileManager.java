@@ -11,13 +11,13 @@ public class FileManager {
     Path directionary;
     File file;
 
-    public FileManager(Path dataDir) {
+    public FileManager(Path dataDir, String fileName) {
 
         this.directionary = dataDir;
         try {
-            file = Files.createFile(directionary.resolve("data.txt")).toFile();
+            file = Files.createFile(directionary.resolve(fileName)).toFile();
         } catch (IOException e) {
-            file = directionary.resolve("data.txt").toFile();
+            file = directionary.resolve(fileName).toFile();
         }
     }
 
@@ -163,5 +163,16 @@ public class FileManager {
         }
 
         return data.toArray(new String[0]);
+    }
+
+    public void deleteAll() {
+        try {
+            PrintWriter writer = new PrintWriter(file);
+            writer.print("");
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }

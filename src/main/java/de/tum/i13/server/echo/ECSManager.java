@@ -23,6 +23,7 @@ public class ECSManager {
     private final String serverInfo;
     private String currentRange;
     private boolean isRunning = false;
+    private ReplicationManager replicationManager;
 
 
     public ECSManager(InetSocketAddress bootstrap, EchoLogic echoLogic) {
@@ -47,7 +48,7 @@ public class ECSManager {
                     int x = 0;
                     while (isRunning) {
                         System.out.print(".");
-                        if (x > 10000) {
+                        if (x > 20000) {
                             throw new RuntimeException("Could not close KVServer properly");
                         }
                         x++;
@@ -97,10 +98,15 @@ public class ECSManager {
             case "update_metaData":
                 this.metaData = convertMetaData(input[1]);
                 updateRange();
+                replicationManager.updateConnections(true);
                 return isRunning;
             case "transfer_all":
                 transfer(input[2], "ALL");
                 shutDown();
+                return isRunning;
+            case "reconstruct_data":
+                reconstructData();
+                write("transfer_successful");
                 return isRunning;
             case "shutDown":
                 shutDown();
@@ -119,41 +125,56 @@ public class ECSManager {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), Constants.TELNET_ENCODING));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), Constants.TELNET_ENCODING));
 
+            ActiveConnection ac = new ActiveConnection(socket, out, in);
+
+
             echoLogic.setWriterLock(true);
             String[] data = echoLogic.getData();
             List<String> toBeDeleted = new LinkedList<>();
-            logger.info(in.readLine());
+            logger.info(ac.readline());
 
             if (data.length != 0) {
                 if (range.equals("ALL")) {
                     logger.info("Transferring all data to server " + toServer);
 
+                    StringBuilder output = new StringBuilder();
                     for (String line : data) {
                         String key = line.split(";")[0];
                         String value = line.split(";")[1];
 
-                        out.write("transfer " + key + " " + value + "\r\n");
+                        output.append("transfer ").append(key).append(" ").append(value).append("\r\n");
                         //out.flush();
                         //in.readLine();
                         toBeDeleted.add(key);
                     }
-                    out.flush();
+
+                    if (output.length() != 0) {
+                        ac.writeWithoutCarriageReturn(output.toString());
+                        logger.info(ac.readline());
+                    }
+                    replicationManager.deleteBoth();
 
                 } else {
                     logger.info("Transferring data in range " + range + " to server " + toServer);
 
+                    StringBuilder output = new StringBuilder();
                     for (String line : data) {
                         String key = line.split(";")[0];
                         String value = line.split(";")[1];
 
                         if (inRange(key, range)) {
-                            out.write("transfer " + key + " " + value + "\r\n");
+                            output.append("transfer ").append(key).append(" ").append(value).append("\r\n");
                             //out.flush();
                             //in.readLine();
                             toBeDeleted.add(key);
                         }
                     }
-                    out.flush();
+
+                    if (output.length() != 0) {
+                        ac.writeWithoutCarriageReturn(output.toString());
+                        logger.info(ac.readline());
+                        //replicationManager.transferBoth();
+                    }
                 }
             }
             write("transfer_successful");
@@ -166,6 +187,11 @@ public class ECSManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void reconstructData() {
+        replicationManager.reconstructData();
+        logger.info("Reconstruction completed");
     }
 
     private void shutDown() {
@@ -242,6 +268,10 @@ public class ECSManager {
 
         String inputHash = hash(input);
 
+        return rangeOfNoHash(inputHash);
+    }
+
+    public String rangeOfNoHash(String input) {
         String from = "";
         String to = "";
         for(String range: metaData.keySet()) {
@@ -250,13 +280,13 @@ public class ECSManager {
             to = rangeArray[1];
 
             if (from.compareTo(to) < 0) {
-                if ((from.compareTo(inputHash) <= 0) && (inputHash.compareTo(to) <= 0)) {
+                if ((from.compareTo(input) <= 0) && (input.compareTo(to) <= 0)) {
                     break;
                 }
             } else {
-                if (((from.compareTo(inputHash) <= 0) && (inputHash.compareTo("ffffffffffffffffffffffffffffffff") <= 0))
-                        || ((inputHash.compareTo("00000000000000000000000000000000")
-                        >= 0) && (inputHash.compareTo(to) <= 0))) {
+                if (((from.compareTo(input) <= 0) && (input.compareTo("ffffffffffffffffffffffffffffffff") <= 0))
+                        || ((input.compareTo("00000000000000000000000000000000")
+                        >= 0) && (input.compareTo(to) <= 0))) {
                     break;
                 }
             }
@@ -274,7 +304,15 @@ public class ECSManager {
         return metaData;
     }
 
+    public String getCurrentRange() {
+        return currentRange;
+    }
+
     private String hash(String input) {
         return getHash(input);
+    }
+
+    public void setReplicationManager(ReplicationManager replicationManager) {
+        this.replicationManager = replicationManager;
     }
 }

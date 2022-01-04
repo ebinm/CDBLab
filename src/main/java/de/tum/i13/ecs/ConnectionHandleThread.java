@@ -47,7 +47,7 @@ public class ConnectionHandleThread extends Thread {
     }
 
     public void process(String command) throws IOException {
-        logger.info("received command: " + command.trim());
+        logger.info("Received command: " + command.trim());
 
         String[] input = command.trim().split(" ");
 
@@ -79,9 +79,8 @@ public class ConnectionHandleThread extends Thread {
     }
 
     public void bruteForceShutDown() {
-        ecsLogic.shutDown(serverInfo);
+        ecsLogic.bruteForceShutDown(serverInfo);
         ecsLogic.setRemovingServer(false);
-        ecsLogic.sendMetaDataToAll();
         shutDown();
     }
 

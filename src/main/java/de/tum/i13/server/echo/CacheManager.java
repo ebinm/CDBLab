@@ -25,7 +25,7 @@ public class CacheManager {
         this.strategy = strategy;
         dataCache = new LinkedList<>();
         this.timeline = 0;
-        this.file = new FileManager(dataDir);
+        this.file = new FileManager(dataDir, "data.txt");
     }
 /*
 In this method we add the KV to the cache

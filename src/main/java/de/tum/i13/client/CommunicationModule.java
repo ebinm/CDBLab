@@ -215,7 +215,7 @@ public class CommunicationModule implements KVStore {
     @Override
     public KVMessage get(String key) throws Exception {
 
-        checkConnection(key);
+        //checkConnection(key);
 
         activeConnection.write("get " + key);
         String input;
@@ -276,8 +276,10 @@ public class CommunicationModule implements KVStore {
             case "server_not_responsible":
                 /*KVMessage kvMessage = */
                 keyRange();
+                checkConnection(key);
                 return get(key);
             case "server_stopped":
+                backOff(this.attempts++);
                 KVMessage result = get(key);
                 this.attempts = 0;
                 return result;
@@ -319,11 +321,52 @@ public class CommunicationModule implements KVStore {
                     }
                 };
             case "server_stopped":
+                backOff(this.attempts++);
                 KVMessage result =keyRange();
                 this.attempts = 0;
                 return result;
         }
         throw new RuntimeException("Error received from Server while using keyrange command!");
+    }
+
+    public KVMessage keyRangeRead() throws Exception {
+        activeConnection.write("keyrange_read");
+        String input;
+        input = activeConnection.readline();
+
+        String[] message = input.split(" ");
+
+        switch (message[0]) {
+            case "keyrange_read_success":
+
+                return new KVMessage() {
+                    @Override
+                    public String getKey() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getValue() {
+                        return null;
+                    }
+
+                    @Override
+                    public StatusType getStatus() {
+                        return StatusType.KEYRANGE_READ_SUCCESS;
+                    }
+
+                    @Override
+                    public String getKeyRange() {
+                        return message[1];
+                    }
+                };
+            case "server_stopped":
+                backOff(this.attempts++);
+                KVMessage result =keyRangeRead();
+                this.attempts = 0;
+                return result;
+        }
+        throw new RuntimeException("Error received from Server while using keyrange_read command!");
     }
 
     private Map<String, String> convertMetaData(String metaDataString) {

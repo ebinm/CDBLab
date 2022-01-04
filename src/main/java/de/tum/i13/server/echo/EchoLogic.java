@@ -20,6 +20,7 @@ public class EchoLogic implements CommandProcessor {
     private ECSManager ecsManager;
     private boolean writerLock;
     private boolean initialization;
+    private ReplicationManager replicationManager;
 
 
     public EchoLogic(Config config) {
@@ -27,15 +28,21 @@ public class EchoLogic implements CommandProcessor {
         this.cfg = config;
         this.cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
         this.ecsManager = new ECSManager(cfg.bootstrap, this);
+        this.replicationManager = new ReplicationManager(this, ecsManager);
         this.writerLock = false;
     }
 
     public String process(String command) {
 
+        logger.info("received command: " + command.trim());
+
+        if(command.startsWith("replica")) {
+            return replicationManager.process(command) + "\n";
+        }
+
         if (initialization) {
             return "server_stopped\n";
         }
-        logger.info("received command: " + command.trim());
 
         //Let the magic happen here
         String[] input = command.trim().split(" ");
@@ -96,11 +103,16 @@ public class EchoLogic implements CommandProcessor {
                         value1.append(input[i]).append(" ");
                     }
                     value1 = new StringBuilder(value1.substring(0, value1.length() - 1));
+
                     put(input[1], value1.toString());
 
                 }
+                //replicationManager.transferBoth();
                 initialization = false;
                 return "transfer_success\n";
+
+            case "keyrange_read":
+                return "keyrange_read_success " + keyRangeRead() + "\n";
 
             case "keyrange":
                 return "keyrange_success " + getMetaData() + "\n";
@@ -113,7 +125,9 @@ public class EchoLogic implements CommandProcessor {
     public String put(String key, String value){
         try {
             if (ecsManager.inRange(key)) {
-                return cacheManager.put(key, value);
+                String output = cacheManager.put(key, value);
+                replicationManager.put(key, value);
+                return output;
             } else return "server_not_responsible";
         } catch (IOException e) {
             return "put_error " + e.getMessage();
@@ -124,6 +138,8 @@ public class EchoLogic implements CommandProcessor {
         try {
             if (ecsManager.inRange(key)) {
                 return cacheManager.get(key);
+            } else if (replicationManager.inRange(key)) {
+                return replicationManager.getOfReplica(key);
             } else return "server_not_responsible";
         } catch (IOException e) {
             return "get_error " + e.getMessage();
@@ -133,7 +149,9 @@ public class EchoLogic implements CommandProcessor {
     public String delete(String key){
         try {
             if (ecsManager.inRange(key)) {
-                return cacheManager.delete(key);
+                String output = cacheManager.delete(key);
+                replicationManager.delete(key);
+                return output;
             } else return "server_not_responsible";
         } catch (IOException e) {
             return "delete_error " + e.getMessage();
@@ -142,6 +160,10 @@ public class EchoLogic implements CommandProcessor {
 
     public String[] getData() throws IOException {
         return cacheManager.getData();
+    }
+
+    private String keyRangeRead() {
+        return replicationManager.getKeyRangesRead();
     }
 
     public void setWriterLock(boolean lock) {
@@ -174,5 +196,9 @@ public class EchoLogic implements CommandProcessor {
 
     public ECSManager getEcsManager() {
         return ecsManager;
+    }
+
+    public Config getCfg() {
+        return cfg;
     }
 }

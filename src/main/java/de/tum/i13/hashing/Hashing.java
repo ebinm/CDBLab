@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Hashing {
 
@@ -76,9 +77,21 @@ public class Hashing {
 //                mod(new BigInteger("100000000000000000000000000000000", 16)).toString(16);
 //        System.out.println(predecessorFrom);
 
-        String string = "transfer\r\n" + "put Ebin Madan\r\n" + "put Leon Madan\r\n" + "put Linti Madan\r\n" + "put Benny Madan\r\n";
-        System.out.println(string);
-        String[] strings = string.trim().split(" ");
-        System.out.println(string.substring(10));
+//        String string = "transfer\r\n" + "put Ebin Madan\r\n" + "put Leon Madan\r\n" + "put Linti Madan\r\n" + "put Benny Madan\r\n";
+//        System.out.println(string);
+//        String[] strings = string.trim().split(" ");
+//        System.out.println(string.substring(10));
+
+        String test1 = "replica1_put";
+        String test2 = "put";
+
+        String[] output1 = test1.split("_");
+        for(String s: output1) {
+            System.out.println(s);
+        }
+        String[] output2 = test2.split("_");
+        for(String s: output2) {
+            System.out.println(s);
+        }
     }
 }

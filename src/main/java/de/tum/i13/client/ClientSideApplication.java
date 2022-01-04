@@ -52,6 +52,9 @@ public class ClientSideApplication {
                     case "help":
                         printHelp();
                         break;
+                    case "keyrange_read":
+                        keyRangeRead(communicationModule);
+                        break;
                     case "keyrange":
                         keyRange(communicationModule);
                         break;
@@ -117,6 +120,21 @@ public class ClientSideApplication {
             case GET_SUCCESS: printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey() + " " +
                     kvMessage.getValue()); return;
             case GET_ERROR: printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKey());
+        }
+    }
+
+    private static void keyRangeRead(CommunicationModule communicationModule) {
+        KVMessage kvMessage;
+
+        try {
+            kvMessage = communicationModule.keyRangeRead();
+        } catch (Exception e) {
+            printEchoLine("KEYRANGE_READ_ERROR KeyRange_read command could not be executed!");
+            return;
+        }
+
+        if (kvMessage.getStatus().equals(KVMessage.StatusType.KEYRANGE_READ_SUCCESS)) {
+            printEchoLine(kvMessage.getStatus() + " " + kvMessage.getKeyRange());
         }
     }
 
