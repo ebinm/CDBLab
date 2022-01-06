@@ -3,6 +3,7 @@ package de.tum.i13.server.echo;
 import de.tum.i13.shared.Constants;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -121,7 +122,16 @@ public class ECSManager {
         String[] serverInfo = toServer.split(":");
         try {
 
-            Socket socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
+            Socket socket = null;
+            boolean connected = true;
+//            while (connected) {
+//                try {
+//                    socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
+//                } catch (ConnectException c) {
+//                    connected = false;
+//                }
+//            }
+            socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), Constants.TELNET_ENCODING));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), Constants.TELNET_ENCODING));
 
