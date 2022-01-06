@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by chris on 19.10.15.
@@ -36,6 +37,8 @@ public class ActiveConnection implements AutoCloseable {
     public String readline()  {
         try {
             return input.readLine();
+        } catch (SocketException ignored) {
+
         } catch (IOException e) {
             e.printStackTrace();
         }
