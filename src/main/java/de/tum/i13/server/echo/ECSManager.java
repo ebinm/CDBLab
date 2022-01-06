@@ -123,10 +123,11 @@ public class ECSManager {
         try {
 
             Socket socket = null;
-            boolean connected = true;
-            while (connected) {
+            boolean connected = false;
+            while (!connected) {
                 try {
                     socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
+                    connected = true;
                 } catch (ConnectException c) {
                     connected = false;
                 }
