@@ -74,7 +74,7 @@ public class ECSLogic {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Thread.sleep(20); //A little buffer to set up the new EchoServer
+            Thread.sleep(200); //A little buffer to set up the new EchoServer
             transfer(transferFrom, serverInfo, rangeCurrent);
         }
         connectionHandleThread.write("start");
