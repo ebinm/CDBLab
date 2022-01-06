@@ -124,14 +124,13 @@ public class ECSManager {
 
             Socket socket = null;
             boolean connected = true;
-//            while (connected) {
-//                try {
-//                    socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
-//                } catch (ConnectException c) {
-//                    connected = false;
-//                }
-//            }
-            socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
+            while (connected) {
+                try {
+                    socket = new Socket(serverInfo[0], Integer.parseInt(serverInfo[1]));
+                } catch (ConnectException c) {
+                    connected = false;
+                }
+            }
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), Constants.TELNET_ENCODING));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), Constants.TELNET_ENCODING));
 
