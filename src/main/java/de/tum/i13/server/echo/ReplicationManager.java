@@ -48,6 +48,8 @@ public class ReplicationManager {
             if (replicationServer_1 != null && replicationServer_1.isConnected()) {
                 try {
                     replicationServer_1.close();
+                    replicationServer_1 = null;
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -56,10 +58,15 @@ public class ReplicationManager {
             if (replicationServer_2 != null && replicationServer_2.isConnected()) {
                 try {
                     replicationServer_2.close();
+                    replicationServer_2 = null;
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+
+            replica_1.deleteAll();
+            replica_2.deleteAll();
         } else {
 
             String rangeCurrent = ecsManager.getCurrentRange();
