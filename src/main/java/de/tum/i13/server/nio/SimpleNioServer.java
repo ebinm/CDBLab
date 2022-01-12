@@ -1,5 +1,6 @@
 package de.tum.i13.server.nio;
 
+import de.tum.i13.server.echo.EchoLogic;
 import de.tum.i13.shared.CommandProcessor;
 import de.tum.i13.shared.Constants;
 
@@ -32,6 +33,7 @@ public class SimpleNioServer {
 
     public SimpleNioServer(CommandProcessor cmdProcessor) {
         this.cmdProcessor = cmdProcessor;
+        ((EchoLogic) cmdProcessor).setSimpleNioServer(this);
         this.pendingChanges = new LinkedList<>();
         this.pendingWrites = new HashMap<>();
         this.pendingReads = new HashMap<>();
@@ -46,6 +48,7 @@ public class SimpleNioServer {
 
         // Bind the server selectionKey to the specified address and port
         InetSocketAddress isa = new InetSocketAddress(InetAddress.getByName(servername), port);
+        this.serverChannel.socket().setReuseAddress(true);
         this.serverChannel.socket().bind(isa);
 
         // Register the server selectionKey channel, indicating an interest in
@@ -260,5 +263,14 @@ public class SimpleNioServer {
             this.pendingWrites.put(selectionKey, queue);
         }
         queue.add(ByteBuffer.wrap(data));
+    }
+
+    public void close() {
+        try {
+            this.selector.close();
+            this.serverChannel.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

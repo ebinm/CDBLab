@@ -1,6 +1,9 @@
 package de.tum.i13.server.echo;
 
+import de.tum.i13.ecs.StartECSServer;
+import de.tum.i13.shared.Config;
 import de.tum.i13.shared.Constants;
+import de.tum.i13.shared.InetSocketAddressTypeConverter;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -25,6 +28,7 @@ public class ECSManager {
     private String currentRange;
     private boolean isRunning = false;
     private ReplicationManager replicationManager;
+    private Thread shutDownHook;
 
 
     public ECSManager(InetSocketAddress bootstrap, EchoLogic echoLogic) {
@@ -40,7 +44,7 @@ public class ECSManager {
 
         Thread readThread = new ReadThread(reader, this);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+        this.shutDownHook = new Thread() {
             @Override
             public void run() {
                 if(isRunning) {
@@ -58,7 +62,8 @@ public class ECSManager {
                     System.out.println("Shut down completed!");
                 }
             }
-        });
+        };
+        Runtime.getRuntime().addShutdownHook(shutDownHook);
 
         System.out.println("Range of the server " + currentRange);
         this.isRunning = true;
@@ -69,15 +74,19 @@ public class ECSManager {
     private Map<String, String>  configureServer(InetSocketAddress bootstrap) throws IOException {
         logger.info("Setting up connection to ECS");
 
-        try {
-            this.ecsSocket = new Socket(bootstrap.getAddress(), bootstrap.getPort());
-            this.reader = new BufferedReader(new InputStreamReader(ecsSocket.getInputStream(), Constants.TELNET_ENCODING));
-            this.writer = new PrintWriter(new OutputStreamWriter(ecsSocket.getOutputStream(), Constants.TELNET_ENCODING));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        boolean retry = true;
+        while (retry) {
+            try {
+                this.ecsSocket = new Socket(bootstrap.getAddress(), bootstrap.getPort());
+                this.reader = new BufferedReader(new InputStreamReader(ecsSocket.getInputStream(), Constants.TELNET_ENCODING));
+                this.writer = new PrintWriter(new OutputStreamWriter(ecsSocket.getOutputStream(), Constants.TELNET_ENCODING));
 
-        logger.info(readLine());
+                logger.info(readLine());
+                retry = false;
+            } catch (IOException ignored) {
+                retry = true;
+            }
+        }
         write(echoLogic.getClientPort());
 
         return convertMetaData(readLine());
@@ -324,5 +333,44 @@ public class ECSManager {
 
     public void setReplicationManager(ReplicationManager replicationManager) {
         this.replicationManager = replicationManager;
+    }
+
+    public void reviveECS() throws Exception {
+        echoLogic.setInitialization(true);
+        String range = rangeOfNoHash("00000000000000000000000000000000");
+        String serverECS = metaData.get(range);
+        InetSocketAddress bootstrap = (new InetSocketAddressTypeConverter()).convert(serverECS);
+        Config config = echoLogic.getCfg();
+        config.setBootstrap(bootstrap);
+
+        if (serverInfo.compareTo(serverECS) == 0) {
+            echoLogic.close();
+            Runtime.getRuntime().removeShutdownHook(shutDownHook);
+
+            System.out.println("Transforming current EchoServer to new ECS");
+
+            String[] data = echoLogic.getData();
+            StringBuilder output = new StringBuilder();
+            for (String line : data) {
+                String key = line.split(";")[0];
+                String value = line.split(";")[1];
+
+                output.append("transfer ").append(key).append(" ").append(value).append("\r\n");
+            }
+
+            if (output.length() == 0) {
+                StartECSServer startECSServer = new StartECSServer(config, null);
+                startECSServer.start();
+            } else {
+                StartECSServer startECSServer = new StartECSServer(config, output.toString());
+                startECSServer.start();
+            }
+
+        } else {
+            Runtime.getRuntime().removeShutdownHook(shutDownHook);
+            ECSManager ecsManager = new ECSManager(bootstrap, echoLogic);
+            echoLogic.setEcsManager(ecsManager);
+            echoLogic.setReplicationManager(new ReplicationManager(echoLogic, ecsManager));
+        }
     }
 }

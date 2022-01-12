@@ -1,6 +1,11 @@
 package de.tum.i13.hashing;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketImpl;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +34,7 @@ public class Hashing {
         return value;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 ////        String number1 = getHash("Hello World");
 ////        System.out.println(number1);
 ////        String number2 = getHash("Hello Ebin");
@@ -82,16 +87,31 @@ public class Hashing {
 //        String[] strings = string.trim().split(" ");
 //        System.out.println(string.substring(10));
 
-        String test1 = "replica1_put";
-        String test2 = "put";
+//        String test1 = "replica1_put";
+//        String test2 = "put";
+//
+//        String[] output1 = test1.split("_");
+//        for(String s: output1) {
+//            System.out.println(s);
+//        }
+//        String[] output2 = test2.split("_");
+//        for(String s: output2) {
+//            System.out.println(s);
+//        }
 
-        String[] output1 = test1.split("_");
-        for(String s: output1) {
-            System.out.println(s);
-        }
-        String[] output2 = test2.split("_");
-        for(String s: output2) {
-            System.out.println(s);
-        }
+//        ServerSocket serverSocket = new ServerSocket();
+//        serverSocket.setReuseAddress(true);
+//        serverSocket.bind(new InetSocketAddress("127.0.0.1", 5199));
+//        Socket socket = serverSocket.accept();
+//        System.out.println(socket.getInetAddress()+":"+socket.getPort());
+//        serverSocket.close();
+//
+//        ServerSocket serverSocket1 = new ServerSocket();
+//        serverSocket1.bind(new InetSocketAddress("127.0.0.1", 5199));
+
+        StringBuilder output = new StringBuilder();
+        output.append("transfer ").append("Ebin").append(" ").append("Madan").append("\r\n");
+        output.delete(output.length()-2, output.length());
+        System.out.println(output.toString());
     }
 }

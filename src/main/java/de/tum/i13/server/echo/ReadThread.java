@@ -5,6 +5,7 @@ import de.tum.i13.ecs.ConnectionHandleThread;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ReadThread extends Thread {
     private BufferedReader reader;
@@ -24,6 +25,14 @@ public class ReadThread extends Thread {
             try {
                 String response = reader.readLine();
                 run = ecsManager.process(response);
+            } catch (SocketException socketException) {
+                try {
+                    ecsManager.reviveECS();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                run = false;
+                break;
             } catch (IOException ex) {
                 System.out.println("Error reading from server: " + ex.getMessage());
                 ex.printStackTrace();

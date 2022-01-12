@@ -175,4 +175,8 @@ in the methode we add KV in the cache base on the remove methode that will be in
     public synchronized String[] getData() throws IOException {
         return file.getData();
     }
+
+    public synchronized void deleteAll() {
+        file.deleteAll();
+    }
 }

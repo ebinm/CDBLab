@@ -75,5 +75,9 @@ public class Config {
                 ", usagehelp=" + usagehelp +
                 '}';
     }
+
+    public void setBootstrap(InetSocketAddress bootstrap) {
+        this.bootstrap = bootstrap;
+    }
 }
 

@@ -100,4 +100,7 @@ public class ConnectionHandleThread extends Thread {
         return activeConnection.readline();
     }
 
+    public String getServerInfo() {
+        return serverInfo;
+    }
 }

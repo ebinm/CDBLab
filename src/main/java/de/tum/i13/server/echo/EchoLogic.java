@@ -1,5 +1,6 @@
 package de.tum.i13.server.echo;
 
+import de.tum.i13.server.nio.SimpleNioServer;
 import de.tum.i13.shared.CommandProcessor;
 import de.tum.i13.shared.Config;
 
@@ -21,6 +22,7 @@ public class EchoLogic implements CommandProcessor {
     private boolean writerLock;
     private boolean initialization;
     private ReplicationManager replicationManager;
+    private SimpleNioServer simpleNioServer;
 
 
     public EchoLogic(Config config) {
@@ -162,6 +164,10 @@ public class EchoLogic implements CommandProcessor {
         return cacheManager.getData();
     }
 
+    public void deleteAll() {
+        cacheManager.deleteAll();
+    }
+
     private String keyRangeRead() {
         return replicationManager.getKeyRangesRead();
     }
@@ -201,4 +207,22 @@ public class EchoLogic implements CommandProcessor {
     public Config getCfg() {
         return cfg;
     }
+
+    public void setEcsManager(ECSManager ecsManager) {
+        this.ecsManager = ecsManager;
+    }
+
+    public void setReplicationManager(ReplicationManager replicationManager) {
+        this.replicationManager = replicationManager;
+    }
+
+    public void setSimpleNioServer(SimpleNioServer simpleNioServer) {
+        this.simpleNioServer = simpleNioServer;
+    }
+
+    public void close() {
+        simpleNioServer.close();
+    }
+
+
 }
