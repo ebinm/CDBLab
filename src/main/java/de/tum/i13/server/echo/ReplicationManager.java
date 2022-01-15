@@ -29,7 +29,7 @@ public class ReplicationManager {
     private String rangeReplica_1;
     private String rangeReplica_2;
 
-    public ReplicationManager(EchoLogic echoLogic, ECSManager ecsManager) {
+    public ReplicationManager(EchoLogic echoLogic, ECSManager ecsManager, boolean transfer) {
         this.echoLogic = echoLogic;
         this.ecsManager = ecsManager;
         ecsManager.setReplicationManager(this);
@@ -38,7 +38,7 @@ public class ReplicationManager {
         this.replica_1 = new FileManager(path, "replica_1.txt");
         this.replica_2 = new FileManager(path, "replica_2.txt");
 
-        updateConnections(false);
+        updateConnections(transfer);
     }
 
     public synchronized void updateConnections(boolean transfer) {

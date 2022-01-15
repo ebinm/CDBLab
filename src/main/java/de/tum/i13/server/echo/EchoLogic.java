@@ -30,7 +30,7 @@ public class EchoLogic implements CommandProcessor {
         this.cfg = config;
         this.cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
         this.ecsManager = new ECSManager(cfg.bootstrap, this);
-        this.replicationManager = new ReplicationManager(this, ecsManager);
+        this.replicationManager = new ReplicationManager(this, ecsManager, false);
         this.writerLock = false;
     }
 

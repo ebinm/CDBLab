@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.*;
 import java.util.List;
@@ -267,8 +264,57 @@ public class SimpleNioServer {
 
     public void close() {
         try {
-            this.selector.close();
-            this.serverChannel.close();
+            this.serverChannel.socket().close();
+
+            if(this.serverChannel != null && this.serverChannel.isOpen()) {
+
+                try {
+
+                    this.serverChannel.close();
+
+                } catch (IOException e) {
+
+                    System.out.println("Exception while closing server socket");
+                }
+            }
+
+            try {
+
+                Iterator<SelectionKey> keys = this.selector.keys().iterator();
+
+                while(keys.hasNext()) {
+
+                    SelectionKey key = keys.next();
+
+                    SelectableChannel channel = key.channel();
+
+                    if(channel instanceof SocketChannel) {
+
+                        SocketChannel socketChannel = (SocketChannel) channel;
+                        Socket socket = socketChannel.socket();
+                        String remoteHost = socket.getRemoteSocketAddress().toString();
+
+
+                        try {
+
+                            socketChannel.close();
+
+                        } catch (IOException e) {
+
+
+                        }
+
+                        key.cancel();
+                    }
+                }
+
+                selector.close();
+
+            } catch(Exception ex) {
+
+                System.out.println("Exception while closing selector");
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

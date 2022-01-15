@@ -91,6 +91,7 @@ public class StartECSServer extends Thread{
                         output.flush();
                         message = input.readLine();
                     }
+                    oldData = null;
 
                     output.close();
                     input.close();

@@ -75,18 +75,27 @@ public class ECSManager {
         logger.info("Setting up connection to ECS");
 
         boolean retry = true;
+        String message = null;
         while (retry) {
             try {
                 this.ecsSocket = new Socket(bootstrap.getAddress(), bootstrap.getPort());
                 this.reader = new BufferedReader(new InputStreamReader(ecsSocket.getInputStream(), Constants.TELNET_ENCODING));
                 this.writer = new PrintWriter(new OutputStreamWriter(ecsSocket.getOutputStream(), Constants.TELNET_ENCODING));
 
-                logger.info(readLine());
-                retry = false;
+                message = readLine();
+
+                if(!message.startsWith("Connection with ECS Server successful")) {
+                    reader.close();
+                    writer.close();
+                    ecsSocket.close();
+                } else {
+                    retry = false;
+                }
             } catch (IOException ignored) {
                 retry = true;
             }
         }
+        logger.info(message);
         write(echoLogic.getClientPort());
 
         return convertMetaData(readLine());
@@ -168,8 +177,12 @@ public class ECSManager {
                     }
 
                     if (output.length() != 0) {
-                        ac.writeWithoutCarriageReturn(output.toString());
-                        logger.info(ac.readline());
+                        String message = "";
+                        do {
+                            ac.writeWithoutCarriageReturn(output.toString());
+                            message = ac.readline();
+                        } while (message.equals("server_stopped"));
+                        logger.info(message);
                     }
                     replicationManager.deleteBoth();
 
@@ -190,8 +203,12 @@ public class ECSManager {
                     }
 
                     if (output.length() != 0) {
-                        ac.writeWithoutCarriageReturn(output.toString());
-                        logger.info(ac.readline());
+                        String message = "";
+                        do {
+                            ac.writeWithoutCarriageReturn(output.toString());
+                            message = ac.readline();
+                        } while (message.equals("server_stopped"));
+                        logger.info(message);
                         //replicationManager.transferBoth();
                     }
                 }
@@ -356,7 +373,10 @@ public class ECSManager {
                 String value = line.split(";")[1];
 
                 output.append("transfer ").append(key).append(" ").append(value).append("\r\n");
+//                echoLogic.delete(key);
+                replicationManager.delete(key);
             }
+//            replicationManager.deleteBoth();
 
             if (output.length() == 0) {
                 StartECSServer startECSServer = new StartECSServer(config, null);
@@ -370,7 +390,7 @@ public class ECSManager {
             Runtime.getRuntime().removeShutdownHook(shutDownHook);
             ECSManager ecsManager = new ECSManager(bootstrap, echoLogic);
             echoLogic.setEcsManager(ecsManager);
-            echoLogic.setReplicationManager(new ReplicationManager(echoLogic, ecsManager));
+            echoLogic.setReplicationManager(new ReplicationManager(echoLogic, ecsManager, true));
         }
     }
 }
