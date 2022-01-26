@@ -1,8 +1,6 @@
-package de.tum.i13;
+package de.tum.i13.DemoTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
 
 /*
 We use Junit 5 (or also called Junit Jupiter)

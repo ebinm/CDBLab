@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.tum.i13.KVIntegrationTest" time="11.172" tests="2" errors="1" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="de.tum.i13.DemoTests.KVIntegrationTest" time="11.172" tests="2" errors="1" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="14"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -56,10 +56,11 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="58.0"/>
   </properties>
-  <testcase name="smokeTest" classname="de.tum.i13.KVIntegrationTest" time="4.109">
-    <error message="Connection refused: connect" type="java.net.ConnectException">java.net.ConnectException: Connection refused: connect
-	at de.tum.i13.KVIntegrationTest.smokeTest(KVIntegrationTest.java:52)
-</error>
+  <testcase name="smokeTest" classname="de.tum.i13.DemoTests.KVIntegrationTest" time="4.109">
+    <error message="Connection refused: connect" type="java.net.ConnectException">java.net.ConnectException: Connection
+        refused: connect
+        at de.tum.i13.DemoTests.KVIntegrationTest.smokeTest(KVIntegrationTest.java:52)
+    </error>
     <system-err><![CDATA[2021-12-07 21:05:29.758 INFO    [de.tum.i13.server.nio.StartSimpleNioServer] Config: Config{port=5153, listenaddr='127.0.0.1', bootstrap=clouddatabases.i13.in.tum.de/<unresolved>:5153, dataDir=data, logfile=echo.log, usagehelp=false} 
 2021-12-07 21:05:29.774 INFO    [de.tum.i13.server.nio.StartSimpleNioServer] Starting server 
 2021-12-07 21:05:29.774 INFO    [de.tum.i13.server.echo.EchoLogic] Setting up connection to ECS 
@@ -70,8 +71,8 @@ Exception in thread "Thread-0" java.lang.NullPointerException
 	at de.tum.i13.server.echo.ECSManager.<init>(ECSManager.java:31)
 	at de.tum.i13.server.echo.EchoLogic.<init>(EchoLogic.java:29)
 	at de.tum.i13.server.nio.StartSimpleNioServer.main(StartSimpleNioServer.java:26)
-	at de.tum.i13.KVIntegrationTest$1.run(KVIntegrationTest.java:42)
+	at de.tum.i13.DemoTests.KVIntegrationTest$1.run(KVIntegrationTest.java:42)
 ]]></system-err>
   </testcase>
-  <testcase name="enjoyTheEcho" classname="de.tum.i13.KVIntegrationTest" time="7.031"/>
+  <testcase name="enjoyTheEcho" classname="de.tum.i13.DemoTests.KVIntegrationTest" time="7.031"/>
 </testsuite>

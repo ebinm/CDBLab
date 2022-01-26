@@ -325,11 +325,7 @@ public class ReplicationManager {
     public synchronized void transfer(ActiveConnection ac, String replica) {
 
         String[] data = new String[0];
-        try {
-            data = echoLogic.getData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        data = echoLogic.getData();
 
         if (data.length != 0) {
 
@@ -442,11 +438,7 @@ public class ReplicationManager {
     public void reconstructData() {
 
         String[] data = new String[0];
-        try {
-            data = replica_1.getData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        data = replica_1.getData();
 
         for (String line : data) {
             String key = line.split(";")[0];

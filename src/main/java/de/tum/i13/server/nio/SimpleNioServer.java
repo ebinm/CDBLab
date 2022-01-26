@@ -28,6 +28,9 @@ public class SimpleNioServer {
     private ByteBuffer readBuffer;
     private CommandProcessor cmdProcessor;
 
+    private volatile boolean inSelect = false;
+    private boolean closed = false;
+
     public SimpleNioServer(CommandProcessor cmdProcessor) {
         this.cmdProcessor = cmdProcessor;
         ((EchoLogic) cmdProcessor).setSimpleNioServer(this);
@@ -63,7 +66,13 @@ public class SimpleNioServer {
             this.pendingChanges.clear();
 
             // Wait for an event one of the registered channels
+            this.inSelect = true;
             this.selector.select();
+            this.inSelect = false;
+
+            if (this.closed) {
+                break;
+            }
 
             // Iterate over the set of keys for which events are available
             Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
@@ -264,54 +273,44 @@ public class SimpleNioServer {
 
     public void close() {
         try {
+            this.closed = true;
+
+            while (!inSelect) {
+                Thread.onSpinWait();
+            }
             this.serverChannel.socket().close();
 
             if(this.serverChannel != null && this.serverChannel.isOpen()) {
 
                 try {
-
                     this.serverChannel.close();
-
                 } catch (IOException e) {
-
                     System.out.println("Exception while closing server socket");
                 }
             }
 
             try {
-
                 Iterator<SelectionKey> keys = this.selector.keys().iterator();
 
                 while(keys.hasNext()) {
-
                     SelectionKey key = keys.next();
-
                     SelectableChannel channel = key.channel();
 
                     if(channel instanceof SocketChannel) {
-
                         SocketChannel socketChannel = (SocketChannel) channel;
                         Socket socket = socketChannel.socket();
                         String remoteHost = socket.getRemoteSocketAddress().toString();
 
-
                         try {
-
                             socketChannel.close();
-
-                        } catch (IOException e) {
-
-
+                        } catch (IOException ignored) {
                         }
-
                         key.cancel();
                     }
                 }
-
                 selector.close();
 
             } catch(Exception ex) {
-
                 System.out.println("Exception while closing selector");
             }
 

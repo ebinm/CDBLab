@@ -1,4 +1,4 @@
-package de.tum.i13;
+package de.tum.i13.Milestones;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

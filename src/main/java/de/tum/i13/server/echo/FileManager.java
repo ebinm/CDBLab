@@ -151,17 +151,22 @@ public class FileManager {
         return exist;
     }
 
-    public String[] getData() throws IOException {
+    public String[] getData() {
         List<String> data = new LinkedList<>();
 
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String line = br.readLine();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line = br.readLine();
 
-        while (line != null) {
-            data.add(line);
-            line = br.readLine();
+            while (line != null) {
+                data.add(line);
+                line = br.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         return data.toArray(new String[0]);
     }
 

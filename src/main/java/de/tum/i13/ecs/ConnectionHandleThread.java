@@ -68,7 +68,7 @@ public class ConnectionHandleThread extends Thread {
         }
     }
 
-    private void shutDown() {
+    public void shutDown() {
         try {
             activeConnection.close();
             readThread.close();

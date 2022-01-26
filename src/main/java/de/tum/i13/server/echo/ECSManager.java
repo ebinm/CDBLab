@@ -7,6 +7,7 @@ import de.tum.i13.shared.InetSocketAddressTypeConverter;
 
 import java.io.*;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -84,7 +85,7 @@ public class ECSManager {
 
                 message = readLine();
 
-                if(!message.startsWith("Connection with ECS Server successful")) {
+                if(message == null || !message.startsWith("Connection with ECS Server successful")) {
                     reader.close();
                     writer.close();
                     ecsSocket.close();
@@ -129,6 +130,9 @@ public class ECSManager {
                 return isRunning;
             case "shutDown":
                 shutDown();
+                return isRunning;
+            case "revive_ECS":
+                reviveECS();
                 return isRunning;
             default:
                 throw new RuntimeException("unknown command: " + command);
@@ -352,11 +356,16 @@ public class ECSManager {
         this.replicationManager = replicationManager;
     }
 
-    public void reviveECS() throws Exception {
+    public void reviveECS()  {
         echoLogic.setInitialization(true);
         String range = rangeOfNoHash("00000000000000000000000000000000");
         String serverECS = metaData.get(range);
-        InetSocketAddress bootstrap = (new InetSocketAddressTypeConverter()).convert(serverECS);
+        InetSocketAddress bootstrap = null;
+        try {
+            bootstrap = (new InetSocketAddressTypeConverter()).convert(serverECS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Config config = echoLogic.getCfg();
         config.setBootstrap(bootstrap);
 
@@ -366,23 +375,26 @@ public class ECSManager {
 
             System.out.println("Transforming current EchoServer to new ECS");
 
-            String[] data = echoLogic.getData();
-            StringBuilder output = new StringBuilder();
+            String[] data = new String[0];
+            data = echoLogic.getData();
+            //            StringBuilder output = new StringBuilder();
+            boolean isData = false;
             for (String line : data) {
                 String key = line.split(";")[0];
-                String value = line.split(";")[1];
-
-                output.append("transfer ").append(key).append(" ").append(value).append("\r\n");
+//                String value = line.split(";")[1];
+//
+//                output.append("transfer ").append(key).append(" ").append(value).append("\r\n");
 //                echoLogic.delete(key);
+                isData = true;
                 replicationManager.delete(key);
             }
-//            replicationManager.deleteBoth();
+            replicationManager.deleteBoth();
 
-            if (output.length() == 0) {
+            if (!isData) {
                 StartECSServer startECSServer = new StartECSServer(config, null);
                 startECSServer.start();
             } else {
-                StartECSServer startECSServer = new StartECSServer(config, output.toString());
+                StartECSServer startECSServer = new StartECSServer(config, echoLogic.getFile());
                 startECSServer.start();
             }
 
@@ -392,5 +404,7 @@ public class ECSManager {
             echoLogic.setEcsManager(ecsManager);
             echoLogic.setReplicationManager(new ReplicationManager(echoLogic, ecsManager, true));
         }
+        isRunning = false;
     }
+
 }

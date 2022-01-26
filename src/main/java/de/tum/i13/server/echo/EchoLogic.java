@@ -4,6 +4,7 @@ import de.tum.i13.server.nio.SimpleNioServer;
 import de.tum.i13.shared.CommandProcessor;
 import de.tum.i13.shared.Config;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -119,6 +120,9 @@ public class EchoLogic implements CommandProcessor {
             case "keyrange":
                 return "keyrange_success " + getMetaData() + "\n";
 
+            case "ecs_address":
+                return "ecs_address_success " + getECSInfo() + "\n";
+
             default:
                 return "error unknown command\n";
         }
@@ -160,7 +164,7 @@ public class EchoLogic implements CommandProcessor {
         }
     }
 
-    public String[] getData() throws IOException {
+    public String[] getData() {
         return cacheManager.getData();
     }
 
@@ -224,5 +228,14 @@ public class EchoLogic implements CommandProcessor {
         simpleNioServer.close();
     }
 
+    public FileManager getFile() {
+        return cacheManager.getFile();
+    }
 
+    private String getECSInfo () {
+        InetSocketAddress inetSocketAddress = cfg.bootstrap;
+        String host = inetSocketAddress.getHostString();
+        int port = inetSocketAddress.getPort();
+        return host + ":" + port;
+    }
 }

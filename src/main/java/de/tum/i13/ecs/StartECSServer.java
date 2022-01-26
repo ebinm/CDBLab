@@ -1,5 +1,6 @@
 package de.tum.i13.ecs;
 
+import de.tum.i13.server.echo.FileManager;
 import de.tum.i13.shared.Config;
 
 import java.io.BufferedReader;
@@ -19,9 +20,14 @@ import static de.tum.i13.shared.LogSetup.setupLogging;
 public class StartECSServer extends Thread{
 
     private Config cfg;
-    private String oldData;
+    private FileManager oldData;
 
-    public StartECSServer(Config cfg, String oldData) {
+    private static ServerSocket serverSocket;
+
+    public StartECSServer() {
+    }
+
+    public StartECSServer(Config cfg, FileManager oldData) {
         this.cfg = cfg;
         this.oldData = oldData;
     }
@@ -34,13 +40,13 @@ public class StartECSServer extends Thread{
         startECS(cfg, null);
     }
 
-    public static void startECS(Config cfg, String oldData) throws IOException {
+    public static void startECS(Config cfg, FileManager file) throws IOException {
         setupLogging(cfg.logfile);
 
         LOGGER.setLevel(Level.parse(cfg.logLevel));
         LOGGER.info("Config: " + cfg.toString());
 
-        final ServerSocket serverSocket = new ServerSocket();
+        serverSocket = new ServerSocket();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -69,10 +75,20 @@ public class StartECSServer extends Thread{
                 Thread th = new ConnectionHandleThread(logic, clientSocket);
                 th.start();
 
-                if (oldData != null) {
+                if (file != null) {
 
                     th.join();
                     LOGGER.info("Transferring old Data to new Server");
+
+                    String[] data = file.getData();
+                    StringBuilder temp = new StringBuilder();
+                    for (String line : data) {
+                        String key = line.split(";")[0];
+                        String value = line.split(";")[1];
+
+                        temp.append("transfer ").append(key).append(" ").append(value).append("\r\n");
+                    }
+                    String oldData = temp.toString();
 
                     String serverInfo = ((ConnectionHandleThread) th).getServerInfo();
 
@@ -91,7 +107,8 @@ public class StartECSServer extends Thread{
                         output.flush();
                         message = input.readLine();
                     }
-                    oldData = null;
+                    file.deleteAll();
+                    file = null;
 
                     output.close();
                     input.close();
@@ -100,6 +117,7 @@ public class StartECSServer extends Thread{
                 }
             }
         } catch (SocketException | InterruptedException s) {
+            logic.closeAllServers();
             System.out.println("Closed ECSServer!");
         }
     }
@@ -111,5 +129,10 @@ public class StartECSServer extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //This method is only to imitate an ECS failure
+    public void stopECS() throws IOException {
+        serverSocket.close();
     }
 }

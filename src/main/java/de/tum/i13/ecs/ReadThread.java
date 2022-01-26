@@ -22,9 +22,11 @@ public class ReadThread extends Thread {
                     connectionHandleThread.process(input);
                 }
             } catch (IOException ex) {
-                System.out.println("Error reading from server: " + ex.getMessage());
-                ex.printStackTrace();
-                connectionHandleThread.bruteForceShutDown();
+                if (!ex.getMessage().equals("Socket closed")) {
+                    System.out.println("Error reading from server: " + ex.getMessage());
+                    ex.printStackTrace();
+                    connectionHandleThread.bruteForceShutDown();
+                }
             }
     }
 

@@ -17,6 +17,17 @@ public class ECSLogic {
     Map<String, ConnectionHandleThread> connections = new HashMap<>();
     volatile boolean removingServer = false;
 
+//    public ECSLogic() {
+//        Runtime.getRuntime().addShutdownHook(new Thread() {
+//            @Override
+//            public void run() {
+//                if (metaData.size() > 0) {
+//                    closeAllServers();
+//                }
+//            }
+//        });
+//    }
+
     public synchronized void add(String serverInfo, ConnectionHandleThread connectionHandleThread) throws InterruptedException {
         LOGGER.info("Adding new Server " + serverInfo + " to the storage system");
 
@@ -238,5 +249,13 @@ public class ECSLogic {
 
     public void setRemovingServer(boolean removingServer) {
         this.removingServer = removingServer;
+    }
+
+    public void closeAllServers() {
+        for(String server: connections.keySet()) {
+            ConnectionHandleThread connectionHandleThread = connections.get(server);
+            connectionHandleThread.write("revive_ECS");
+            connectionHandleThread.shutDown();
+        }
     }
 }

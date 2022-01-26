@@ -1,6 +1,4 @@
-package de.tum.i13;
-
-import org.junit.jupiter.api.Test;
+package de.tum.i13.DemoTests;
 
 import java.io.*;
 import java.net.InetSocketAddress;

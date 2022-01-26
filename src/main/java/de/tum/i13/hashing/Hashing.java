@@ -1,5 +1,7 @@
 package de.tum.i13.hashing;
 
+import de.tum.i13.ecs.StartECSServer;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
@@ -109,9 +111,34 @@ public class Hashing {
 //        ServerSocket serverSocket1 = new ServerSocket();
 //        serverSocket1.bind(new InetSocketAddress("127.0.0.1", 5199));
 
-        StringBuilder output = new StringBuilder();
-        output.append("transfer ").append("Ebin").append(" ").append("Madan").append("\r\n");
-        output.delete(output.length()-2, output.length());
-        System.out.println(output.toString());
+//        StringBuilder output = new StringBuilder();
+//        output.append("transfer ").append("Ebin").append(" ").append("Madan").append("\r\n");
+//        output.delete(output.length()-2, output.length());
+//        System.out.println(output.toString());
+
+        StartECSServer startECSServer = new StartECSServer();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StartECSServer.main(new String[]{"-b 127.0.0.1:5153"});
+                    } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+//        thread.interrupt();
+        startECSServer.stopECS();
+
+        System.out.println("Thread has been interupted");
+
     }
 }
