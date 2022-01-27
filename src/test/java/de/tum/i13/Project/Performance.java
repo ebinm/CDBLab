@@ -1,0 +1,173 @@
+package de.tum.i13.Project;
+
+import de.tum.i13.ecs.ActiveConnection;
+import de.tum.i13.ecs.StartECSServer;
+import de.tum.i13.server.nio.StartSimpleNioServer;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class Performance {
+
+    private StartECSServer ecs;
+    private int port = 6153;
+
+    @BeforeAll
+    static void setUpDirectory() throws IOException {
+        try {
+            Files.createDirectory(Path.of("PerformanceTest"));
+        } catch (FileAlreadyExistsException ignored) {
+
+        }
+    }
+
+    @BeforeEach
+    public void setUpECS() {
+        ecs = new StartECSServer();
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    ecs.main(new String[]{"-b 127.0.0.1:" + port, "-p" + port});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Thread closed");
+            }
+        };
+        thread.start();
+        port += 100;
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopECS() {
+        try {
+            ecs.stopECS();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    /**
+     * Method tests whether one of the KV Servers converts to the new ECS Server, after removing the original ECS.
+     * Therefore, the new method ecs_address is used, to identify the current ECS Server.
+     */
+    public void testOneKVWithData() throws IOException {
+
+        Thread nio1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + 6359, "-dPerformanceTest/" +6359});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        nio1.start();
+
+        Socket s = new Socket("127.0.0.1", 6359);
+        PrintWriter output = new PrintWriter(s.getOutputStream());
+        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+        ActiveConnection activeConnection = new ActiveConnection(s, output, input);
+
+        System.out.println(activeConnection.readline());
+
+        List<String> keys = new LinkedList<>();
+        for (int i = 1; i <= 1000; i++) {
+            String key = randomString(30);
+            String value = randomString(30);
+
+            activeConnection.write("put " + key + " " + value);
+            String message = activeConnection.readline();
+            if (message.equals("put_update " + key)) {
+                i = i - 1;
+            } else {
+                keys.add(key);
+            }
+        }
+
+//        Thread nio2 = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + 6360,
+//                            "-dPerformanceTest/" +6360});
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        nio2.start();
+//
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        activeConnection.write("ecs_address");
+//        String in = activeConnection.readline();
+//        System.out.println(in);
+//        assertEquals("ecs_address_success 127.0.0.1:" + port, in);
+//
+//        System.out.println("Removing ESC Server!");
+//        stopECS();
+//
+//        try {
+//            Thread.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        for(String key: keys) {
+//            activeConnection.write("delete " + key);
+//            String message = activeConnection.readline();
+//            assertEquals("delete_success " + key, message);
+//        }
+//
+//        try {
+//            activeConnection.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    /**
+     * Method to generate a random String with a maximum length of the value bound
+     */
+    public String randomString(int bound) {
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = (new Random()).nextInt(bound) + 1;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+
+        return generatedString;
+    }
+}

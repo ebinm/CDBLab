@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Hashing {
 
@@ -37,6 +38,7 @@ public class Hashing {
     }
 
     public static void main(String[] args) throws IOException {
+
 ////        String number1 = getHash("Hello World");
 ////        System.out.println(number1);
 ////        String number2 = getHash("Hello Ebin");
@@ -116,29 +118,47 @@ public class Hashing {
 //        output.delete(output.length()-2, output.length());
 //        System.out.println(output.toString());
 
-        StartECSServer startECSServer = new StartECSServer();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    StartECSServer.main(new String[]{"-b 127.0.0.1:5153"});
-                    } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
+//        StartECSServer startECSServer = new StartECSServer();
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    StartECSServer.main(new String[]{"-b 127.0.0.1:5153"});
+//                    } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        thread.start();
+//
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+////        thread.interrupt();
+//        startECSServer.stopECS();
+//
+//        System.out.println("Thread has been interupted");
 
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (int i = 0; i < 100; i++) {
+            givenUsingJava8_whenGeneratingRandomAlphanumericString_thenCorrect();
         }
+    }
 
-//        thread.interrupt();
-        startECSServer.stopECS();
+    public static void givenUsingJava8_whenGeneratingRandomAlphanumericString_thenCorrect() {
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = (new Random()).nextInt(20) + 1;
+        Random random = new Random();
 
-        System.out.println("Thread has been interupted");
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
 
+        System.out.println(generatedString);
     }
 }

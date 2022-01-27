@@ -108,9 +108,11 @@ public class EchoLogic implements CommandProcessor {
                     value1 = new StringBuilder(value1.substring(0, value1.length() - 1));
 
                     put(input[1], value1.toString());
+                    logger.info("storing " + input[1]);
 
                 }
                 //replicationManager.transferBoth();
+                logger.info("all data stored");
                 initialization = false;
                 return "transfer_success\n";
 

@@ -63,6 +63,7 @@ public class FileManager {
 
             }
         }
+        br.close();
         return value;
     }
 
@@ -100,29 +101,32 @@ public class FileManager {
             line = br.readLine();
 
         }
-
-        BufferedReader cr = new BufferedReader(new FileReader(out));
-        BufferedWriter cw = new BufferedWriter(new FileWriter(file));
-
-        line = cr.readLine();
-
-
-        while (line != null) {
-
-            keyTemp = line.split(";")[0];
-            cw.write(line);
-            cw.newLine();
-            cw.flush();
-
-
-            line = cr.readLine();
-
-        }
-
         bw.close();
         br.close();
-        cw.close();
-        cr.close();
+
+        this.file.delete();
+        out.renameTo(file);
+
+//        BufferedReader cr = new BufferedReader(new FileReader(out));
+//        BufferedWriter cw = new BufferedWriter(new FileWriter(file));
+//
+//        line = cr.readLine();
+//
+//
+//        while (line != null) {
+//
+//            keyTemp = line.split(";")[0];
+//            cw.write(line);
+//            cw.newLine();
+//            cw.flush();
+//
+//
+//            line = cr.readLine();
+//
+//        }
+//
+//        cw.close();
+//        cr.close();
 
         return value;
 
@@ -148,6 +152,7 @@ public class FileManager {
             }
         }
 
+        br.close();
         return exist;
     }
 
@@ -162,6 +167,7 @@ public class FileManager {
                 data.add(line);
                 line = br.readLine();
             }
+            br.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

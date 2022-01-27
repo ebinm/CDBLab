@@ -3,6 +3,7 @@ package de.tum.i13.Project;
 import de.tum.i13.ecs.ActiveConnection;
 import de.tum.i13.ecs.StartECSServer;
 import de.tum.i13.server.nio.StartSimpleNioServer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +12,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Test1 {
+public class Functionality {
 
     private StartECSServer ecs;
     private int port  = 5153;
+
+    @BeforeAll
+    static void setUpDirectory() throws IOException {
+        try {
+            Files.createDirectory(Path.of("FunctionalityTest"));
+        } catch (FileAlreadyExistsException ignored) {
+
+        }
+    }
 
     @BeforeEach
     public void setUpECS() {
@@ -61,7 +74,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5259, "-d"+5259});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5259, "-dFunctionalityTest/"+5259});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -73,7 +86,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5260, "-d"+5260});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5260, "-dFunctionalityTest/"+5260});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -136,7 +149,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5159, "-d"+5159});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5159, "-dFunctionalityTest/"+5159});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -148,7 +161,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5160, "-d"+5160});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5160, "-dFunctionalityTest/"+5160});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -160,7 +173,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5161, "-d"+5161});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5161, "-dFunctionalityTest/"+5161});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -172,7 +185,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5162, "-d"+5162});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5162, "-dFunctionalityTest/"+5162});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -242,7 +255,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5359, "-d"+5359});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5359, "-dFunctionalityTest/"+5359});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -254,7 +267,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5360, "-d"+5360});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5360, "-dFunctionalityTest/"+5360});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -350,7 +363,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5459, "-d"+5459});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:"+port, "-p"+5459, "-dFunctionalityTest/"+5459});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -406,7 +419,7 @@ public class Test1 {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:5459", "-p"+5460, "-d"+5460});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:5459", "-p"+5460, "-dFunctionalityTest/"+5460});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
