@@ -68,10 +68,10 @@ public class Performance {
 
     @Test
     /**
-     * Method tests whether one of the KV Servers converts to the new ECS Server, after removing the original ECS.
-     * Therefore, the new method ecs_address is used, to identify the current ECS Server.
+     * Method tests the performance of the ECS replacement with another KV Server to add on different
+     * size of data
      */
-    public void testOneKVWithData() throws IOException {
+    public void testVariousDataSize() throws IOException {
 
         Thread nio1 = new Thread(new Runnable() {
             @Override
@@ -94,63 +94,129 @@ public class Performance {
         System.out.println(activeConnection.readline());
 
         List<String> keys = new LinkedList<>();
-        for (int i = 1; i <= 1000; i++) {
+        for (int i = 1; i <= 500; i++) {
             String key = randomString(30);
             String value = randomString(30);
 
             activeConnection.write("put " + key + " " + value);
             String message = activeConnection.readline();
-            if (message.equals("put_update " + key)) {
+            if (!message.equals("put_success " + key)) {
                 i = i - 1;
             } else {
                 keys.add(key);
             }
         }
 
-//        Thread nio2 = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + 6360,
-//                            "-dPerformanceTest/" +6360});
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        nio2.start();
-//
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        activeConnection.write("ecs_address");
-//        String in = activeConnection.readline();
-//        System.out.println(in);
-//        assertEquals("ecs_address_success 127.0.0.1:" + port, in);
-//
-//        System.out.println("Removing ESC Server!");
-//        stopECS();
-//
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        for(String key: keys) {
-//            activeConnection.write("delete " + key);
-//            String message = activeConnection.readline();
-//            assertEquals("delete_success " + key, message);
-//        }
-//
-//        try {
-//            activeConnection.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        Thread nio2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + 6360,
+                            "-dPerformanceTest/" +6360});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        nio2.start();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        activeConnection.write("ecs_address");
+        String in = activeConnection.readline();
+        System.out.println(in);
+        assertEquals("ecs_address_success 127.0.0.1:" + port, in);
+
+        System.out.println("Removing ESC Server!");
+        stopECS();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        for(String key: keys) {
+            activeConnection.write("delete " + key);
+            String message = activeConnection.readline();
+            assertEquals("delete_success " + key, message);
+        }
+
+        try {
+            activeConnection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    /**
+     * Method tests the performance of the ECS replacement with another KV Server to add on different
+     * size of data
+     */
+    public void testVariousKVs() throws IOException {
+
+        Thread nio1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + 6361, "-dPerformanceTest/" +6361});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        nio1.start();
+
+        Socket s = new Socket("127.0.0.1", 6361);
+        PrintWriter output = new PrintWriter(s.getOutputStream());
+        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+        ActiveConnection activeConnection = new ActiveConnection(s, output, input);
+
+        System.out.println(activeConnection.readline());
+
+        List<String> keys = new LinkedList<>();
+        for (int i = 1; i <= 500; i++) {
+            String key = randomString(30);
+            String value = randomString(30);
+
+            activeConnection.write("put " + key + " " + value);
+            String message = activeConnection.readline();
+            if (!message.equals("put_success " + key)) {
+                i = i - 1;
+            } else {
+                keys.add(key);
+            }
+        }
+
+        int id = 6370;
+        for(int i = 1; i <= 10; i++) {
+            int finalId = id;
+            Thread nio = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + finalId,
+                                "-dPerformanceTest/" + finalId});
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            nio.start();
+
+            id++;
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

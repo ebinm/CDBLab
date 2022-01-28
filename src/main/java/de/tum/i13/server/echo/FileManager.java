@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 public class FileManager {
 
     Path directionary;
@@ -22,7 +24,7 @@ public class FileManager {
     }
 
     /*
-   in this method we put the KV in the in the file
+   in this method we put the KV into the file
      */
     public void put(String key, String value) throws IOException {
 
@@ -32,6 +34,7 @@ public class FileManager {
         bw.newLine();
         bw.flush();
         bw.close();
+
     }
 
     /*
@@ -104,8 +107,8 @@ public class FileManager {
         bw.close();
         br.close();
 
-        this.file.delete();
-        out.renameTo(file);
+        Files.move(out.toPath(), file.toPath(), REPLACE_EXISTING);
+
 
 //        BufferedReader cr = new BufferedReader(new FileReader(out));
 //        BufferedWriter cw = new BufferedWriter(new FileWriter(file));

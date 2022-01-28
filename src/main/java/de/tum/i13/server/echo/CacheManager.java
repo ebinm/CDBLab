@@ -167,7 +167,6 @@ in the methode we add KV in the cache base on the remove methode that will be in
                     throw new IllegalStateException("Unexpected value: " + strategy);
             }
             KVPair kvPair = dataCache.remove(indexToRemove);
-            file.put(kvPair.getKey(), kvPair.getValue());
             dataCache.add(new KVPair(key, value, timeline++));
         }
     }
