@@ -139,7 +139,7 @@ public class ECSManager {
         }
     }
 
-    private void transfer(String toServer, String range) {
+    private synchronized void transfer(String toServer, String range) {
 
         String[] serverInfo = toServer.split(":");
         try {

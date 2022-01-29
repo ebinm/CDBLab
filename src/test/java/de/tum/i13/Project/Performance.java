@@ -180,8 +180,9 @@ public class Performance {
 
         System.out.println(activeConnection.readline());
 
+        System.out.println("Putting in data to the first kv server");
         List<String> keys = new LinkedList<>();
-        for (int i = 1; i <= 500; i++) {
+        for (int i = 1; i <= 100; i++) {
             String key = randomString(30);
             String value = randomString(30);
 
@@ -194,8 +195,9 @@ public class Performance {
             }
         }
 
+        System.out.println("Starting more kv servers");
         int id = 6370;
-        for(int i = 1; i <= 10; i++) {
+        for(int i = 1; i <= 5; i++) {
             int finalId = id;
             Thread nio = new Thread(new Runnable() {
                 @Override
@@ -212,10 +214,16 @@ public class Performance {
 
             id++;
             try {
-                Thread.sleep(3000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            Thread.sleep(10000000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

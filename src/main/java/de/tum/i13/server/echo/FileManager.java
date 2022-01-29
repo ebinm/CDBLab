@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class FileManager {
@@ -26,7 +27,7 @@ public class FileManager {
     /*
    in this method we put the KV into the file
      */
-    public void put(String key, String value) throws IOException {
+    public synchronized void put(String key, String value) throws IOException {
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 
@@ -40,7 +41,7 @@ public class FileManager {
     /*
     In this methode we return the Value that corresponds to the key
      */
-    public String get(String key) throws IOException {
+    public synchronized String get(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line = br.readLine();
@@ -74,9 +75,9 @@ public class FileManager {
     /*
     In this methode we delete the kv pair from the file
      */
-    public String delete(String key) throws IOException {
+    public synchronized String delete(String key) throws IOException {
 
-        File out = new File(directionary.resolve("temp.txt").toString());
+        File out = new File(directionary.resolve("temp_" + file.getName()).toString());
 
 
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -107,7 +108,7 @@ public class FileManager {
         bw.close();
         br.close();
 
-        Files.move(out.toPath(), file.toPath(), REPLACE_EXISTING);
+        Files.move(out.toPath(), file.toPath(), REPLACE_EXISTING, ATOMIC_MOVE);
 
 
 //        BufferedReader cr = new BufferedReader(new FileReader(out));
@@ -130,6 +131,8 @@ public class FileManager {
 //
 //        cw.close();
 //        cr.close();
+//
+//        out.delete();
 
         return value;
 
@@ -138,7 +141,7 @@ public class FileManager {
     /*
     In this method we check if the Key is already stored in the File and returns a boolean
     */
-    public boolean contains(String key) throws IOException {
+    public synchronized boolean contains(String key) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(file));
         String line = br.readLine();
@@ -159,7 +162,7 @@ public class FileManager {
         return exist;
     }
 
-    public String[] getData() {
+    public synchronized String[] getData() {
         List<String> data = new LinkedList<>();
 
         try {
@@ -179,7 +182,7 @@ public class FileManager {
         return data.toArray(new String[0]);
     }
 
-    public void deleteAll() {
+    public synchronized void deleteAll() {
         try {
             PrintWriter writer = new PrintWriter(file);
             writer.print("");

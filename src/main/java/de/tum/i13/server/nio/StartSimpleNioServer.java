@@ -15,8 +15,8 @@ public class StartSimpleNioServer {
     public static Logger logger = Logger.getLogger(StartSimpleNioServer.class.getName());
 
     public static void main(String[] args) throws IOException {
-        String test = "5159";
-        Config cfg = parseCommandlineArgs(new String[]{"-b 127.0.0.1:5153", "-p"+test, "-d"+test}/*args*/);  //Do not change this
+//        String test = "5159";
+        Config cfg = parseCommandlineArgs(/*new String[]{"-b 127.0.0.1:5153", "-p"+test, "-d"+test}*/args);  //Do not change this
         setupLogging(cfg.logfile);
         logger.info("Config: " + cfg.toString());
 
