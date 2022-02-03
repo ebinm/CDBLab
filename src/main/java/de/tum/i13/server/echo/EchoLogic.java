@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,13 @@ public class EchoLogic implements CommandProcessor {
 
     public EchoLogic(Config config) {
         this.initialization = true;
+
+        try {
+            logger.setLevel(Level.parse(config.logLevel));
+        } catch (RuntimeException e) {
+            logger.info("Could not set the specified Level: " + config.logLevel);
+        }
+
         this.cfg = config;
         this.cacheManager = new CacheManager(cfg.cacheSize, cfg.strategy, cfg.dataDir);
         this.ecsManager = new ECSManager(cfg.bootstrap, this);
@@ -240,4 +248,5 @@ public class EchoLogic implements CommandProcessor {
         int port = inetSocketAddress.getPort();
         return host + ":" + port;
     }
+
 }

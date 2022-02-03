@@ -15,6 +15,7 @@ public class ConnectionHandleThread extends Thread {
     private PingThread pingThread;
     private String serverInfo;
     private ActiveConnection activeConnection;
+    private volatile boolean ready = true;
 
     public ConnectionHandleThread(ECSLogic ecsLogic, Socket clientSocket) {
         this.ecsLogic = ecsLogic;
@@ -31,6 +32,8 @@ public class ConnectionHandleThread extends Thread {
             activeConnection.write("Connection with ECS Server successful");
 
             serverInfo = readLine();
+
+            queue();
             ecsLogic.add(serverInfo, this);
 
             this.readThread = new ReadThread(in, this);
@@ -40,6 +43,7 @@ public class ConnectionHandleThread extends Thread {
             pingThread.start();
 
             System.out.println("Added Server " + serverInfo + " to the storage service");
+            System.out.println("--------------------Number " + ecsLogic.metaData.size() + " on " + System.currentTimeMillis() + "----------------");
 
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -52,16 +56,29 @@ public class ConnectionHandleThread extends Thread {
         String[] input = command.trim().split(" ");
 
         switch (input[0]) {
-            case "transfer_successful":
-                ecsLogic.sendMetaDataToAll();
-                return;
+//            case "transfer_successful":
+//                ecsLogic.sendMetaDataToAll();
+//                return;
             case "initialize_shutdown":
+                queue();
                 String output = ecsLogic.shutDown(serverInfo);
                 write(output);
                 return;
+            case "integration_successful":
+                ecsLogic.sendMetaDataToAll();
+//                ecsLogic.setAddingServer(false);
+                return;
             case "shutDown_successful":
-                ecsLogic.setRemovingServer(false);
+                ecsLogic.sendMetaDataToAll();
+//                ecsLogic.setRemovingServer(false);
                 shutDown();
+                return;
+            case "reconstruction_successful":
+                ecsLogic.sendMetaDataToAll();
+//                ecsLogic.setRemovingServer(false);
+                return;
+            case "update_successful":
+                ecsLogic.inform();
                 return;
             default:
                 throw new RuntimeException("unknown command");
@@ -79,8 +96,8 @@ public class ConnectionHandleThread extends Thread {
     }
 
     public void bruteForceShutDown() {
+        queue();
         ecsLogic.bruteForceShutDown(serverInfo);
-        ecsLogic.setRemovingServer(false);
         shutDown();
     }
 
@@ -102,5 +119,18 @@ public class ConnectionHandleThread extends Thread {
 
     public String getServerInfo() {
         return serverInfo;
+    }
+
+    private void queue() {
+        ecsLogic.queue(this);
+
+        while (!ready) {
+            Thread.onSpinWait();
+
+        }
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }

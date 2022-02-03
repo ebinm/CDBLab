@@ -4,7 +4,10 @@ package de.tum.i13.ecs;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.logging.Logger;
 
 import static de.tum.i13.hashing.Hashing.getHash;
 import static de.tum.i13.ecs.StartECSServer.LOGGER;
@@ -15,7 +18,9 @@ public class ECSLogic {
     Map<String, String> metaData = new HashMap<>();
     //Map Serverinfo to CommunicationThread
     Map<String, ConnectionHandleThread> connections = new HashMap<>();
-    volatile boolean removingServer = false;
+    private Queue<ConnectionHandleThread> requests = new LinkedList<>();
+    private volatile boolean busy = false;
+    private volatile int updated;
 
 //    public ECSLogic() {
 //        Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -28,7 +33,35 @@ public class ECSLogic {
 //        });
 //    }
 
+    public void queue(ConnectionHandleThread c) {
+        if(busy) {
+            LOGGER.info("Queue request");
+            c.setReady(false);
+            requests.add(c);
+        } else {
+            LOGGER.info("Start request");
+            c.setReady(true);
+        }
+
+//        do {
+//            while (busy) {
+//                Thread.onSpinWait();
+//            }
+//
+//            LOGGER.info("Deque request");
+//            ConnectionHandleThread y = requests.remove();
+//            y.setReady(true);
+//
+//            if (requests.isEmpty()) {
+//                this.busy = false;
+//            } else {
+//                this.busy = true;
+//            }
+//        } while (busy);
+    }
+
     public synchronized void add(String serverInfo, ConnectionHandleThread connectionHandleThread) throws InterruptedException {
+        setAddingServer(true);
         LOGGER.info("Adding new Server " + serverInfo + " to the storage system");
 
         connections.put(serverInfo, connectionHandleThread);
@@ -55,6 +88,7 @@ public class ECSLogic {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            setAddingServer(false);
         } else {
             String serverHash = hash(serverInfo);
             String rangeTemp = rangeOf(serverInfo);
@@ -104,12 +138,9 @@ public class ECSLogic {
     }
 
     public synchronized void bruteForceShutDown(String serverInfo) {
-
-        LOGGER.info("Shutting down server ungracefully " + serverInfo);
-        while (removingServer) {
-            Thread.onSpinWait();
-        }
         setRemovingServer(true);
+        LOGGER.info("Shutting down server ungracefully " + serverInfo);
+
 
         if (metaData.size() > 1) {
             String serverHash = hash(serverInfo);
@@ -145,16 +176,13 @@ public class ECSLogic {
             String currentRange = rangeOf(serverInfo);
             metaData.remove(currentRange);
             connections.remove(serverInfo);
-            sendMetaDataToAll();
+            setBusy(false);
         }
     }
 
     public synchronized String shutDown(String serverInfo) {
-        LOGGER.info("Shutting down server " + serverInfo);
-        while (removingServer) {
-            Thread.onSpinWait();
-        }
         setRemovingServer(true);
+        LOGGER.info("Shutting down server " + serverInfo);
 
         if (metaData.size() > 1) {
             String serverHash = hash(serverInfo);
@@ -186,6 +214,7 @@ public class ECSLogic {
             String currentRange = rangeOf(serverInfo);
             metaData.remove(currentRange);
             connections.remove(serverInfo);
+            setBusy(false);
             return "shutDown";
         }
     }
@@ -208,7 +237,9 @@ public class ECSLogic {
     public synchronized void sendMetaDataToAll() {
         LOGGER.info("Updating Metadata on all servers");
 
+        updated = metaData.size();
         writeAllServers("update_metaData " + getMetaData());
+
     }
 
     private String rangeOfHash(String inputHash) {
@@ -248,7 +279,7 @@ public class ECSLogic {
     }
 
     public void setRemovingServer(boolean removingServer) {
-        this.removingServer = removingServer;
+        setBusy(removingServer);
     }
 
     public void closeAllServers() {
@@ -256,6 +287,31 @@ public class ECSLogic {
             ConnectionHandleThread connectionHandleThread = connections.get(server);
             connectionHandleThread.write("revive_ECS");
             connectionHandleThread.shutDown();
+        }
+    }
+
+    public synchronized void inform() {
+        this.updated--;
+        LOGGER.info(String.valueOf(updated));
+
+        if(updated == 0) {
+            setBusy(false);
+        }
+    }
+
+    public void setAddingServer(boolean addingServer) {
+        setBusy(addingServer);
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
+
+        if (!busy) {
+            if(!requests.isEmpty()) {
+                this.busy = true;
+                LOGGER.info("Deque request");
+                requests.remove().setReady(true);
+            }
         }
     }
 }

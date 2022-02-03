@@ -114,11 +114,13 @@ public class ECSManager {
             case "transfer":
                 transfer(input[2], input[3]);
                 logger.info("Transfer completed");
+                write("integration_successful");
                 return isRunning;
             case "update_metaData":
                 this.metaData = convertMetaData(input[1]);
                 updateRange();
                 replicationManager.updateConnections(true);
+                write("update_successful");
                 return isRunning;
             case "transfer_all":
                 transfer(input[2], "ALL");
@@ -126,7 +128,7 @@ public class ECSManager {
                 return isRunning;
             case "reconstruct_data":
                 reconstructData();
-                write("transfer_successful");
+                write("reconstruction_successful");
                 return isRunning;
             case "shutDown":
                 shutDown();
@@ -217,7 +219,7 @@ public class ECSManager {
                     }
                 }
             }
-            write("transfer_successful");
+//            write("transfer_successful");
 
             for(String key: toBeDeleted) {
                 echoLogic.delete(key);
@@ -337,7 +339,7 @@ public class ECSManager {
 
     private void updateRange(){
         this.currentRange = rangeOf(serverInfo);
-        System.out.println("New range of server " + currentRange);
+        //System.out.println("New range of server " + currentRange);
     }
 
     public Map<String, String> getMetaData() {
@@ -368,6 +370,14 @@ public class ECSManager {
         }
         Config config = echoLogic.getCfg();
         config.setBootstrap(bootstrap);
+
+        try {
+            this.writer.close();
+            this.reader.close();
+            this.ecsSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (serverInfo.compareTo(serverECS) == 0) {
             echoLogic.close();

@@ -102,7 +102,7 @@ public class StartECSServer extends Thread{
                     LOGGER.info(input.readLine());
 
                     String message = "server_stopped";
-                    while (message.equals("server_stopped")) {
+                    while (message == null || message.equals("server_stopped")) {
                         output.write(oldData);
                         output.flush();
                         message = input.readLine();

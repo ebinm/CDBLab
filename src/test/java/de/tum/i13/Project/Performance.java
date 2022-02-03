@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,6 +26,7 @@ public class Performance {
 
     private StartECSServer ecs;
     private int port = 6153;
+
 
     @BeforeAll
     static void setUpDirectory() throws IOException {
@@ -59,6 +61,7 @@ public class Performance {
     }
 
     private void stopECS() {
+        System.out.println("---------Shutting down ECS on " + System.currentTimeMillis() + " ------------------------");
         try {
             ecs.stopECS();
         } catch (IOException e) {
@@ -94,7 +97,7 @@ public class Performance {
         System.out.println(activeConnection.readline());
 
         List<String> keys = new LinkedList<>();
-        for (int i = 1; i <= 500; i++) {
+        for (int i = 1; i <= 1; i++) {
             String key = randomString(30);
             String value = randomString(30);
 
@@ -160,11 +163,12 @@ public class Performance {
      */
     public void testVariousKVs() throws IOException {
 
+        int firstPort = getRandomNumber(49152, 65535);
         Thread nio1 = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + 6361, "-dPerformanceTest/" +6361});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + firstPort, "-dPerformanceTest/" +firstPort, "-ll=OFF"});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -172,7 +176,7 @@ public class Performance {
         });
         nio1.start();
 
-        Socket s = new Socket("127.0.0.1", 6361);
+        Socket s = new Socket("127.0.0.1", firstPort);
         PrintWriter output = new PrintWriter(s.getOutputStream());
         BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
@@ -182,7 +186,7 @@ public class Performance {
 
         System.out.println("Putting in data to the first kv server");
         List<String> keys = new LinkedList<>();
-        for (int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 1000; i++) {
             String key = randomString(30);
             String value = randomString(30);
 
@@ -196,15 +200,24 @@ public class Performance {
         }
 
         System.out.println("Starting more kv servers");
-        int id = 6370;
+        List<Integer> ports = new LinkedList<>();
+        ports.add(firstPort);
         for(int i = 1; i <= 5; i++) {
+
+            int id;
+            do {
+                id = getRandomNumber(49152, 65535);
+            } while (ports.contains(id));
+            ports.add(id);
+
             int finalId = id;
+
             Thread nio = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + finalId,
-                                "-dPerformanceTest/" + finalId});
+                                "-dPerformanceTest/" + finalId, "-ll=OFF"});
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -212,16 +225,25 @@ public class Performance {
             });
             nio.start();
 
-            id++;
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(3000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
 
         try {
-            Thread.sleep(10000000);
+            Thread.sleep(40000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Removing ESC Server!");
+        stopECS();
+
+        System.out.println("Finished");
+        try {
+            Thread.sleep(100000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -243,5 +265,9 @@ public class Performance {
                 .toString();
 
         return generatedString;
+    }
+
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
     }
 }
