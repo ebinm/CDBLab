@@ -33,13 +33,14 @@ public class ECSLogic {
 //        });
 //    }
 
-    public void queue(ConnectionHandleThread c) {
+    public synchronized void queue(ConnectionHandleThread c) {
         if(busy) {
             LOGGER.info("Queue request");
             c.setReady(false);
             requests.add(c);
         } else {
             LOGGER.info("Start request");
+            setBusy(true);
             c.setReady(true);
         }
 
@@ -292,7 +293,7 @@ public class ECSLogic {
 
     public synchronized void inform() {
         this.updated--;
-        LOGGER.info(String.valueOf(updated));
+//        LOGGER.info(String.valueOf(updated));
 
         if(updated == 0) {
             setBusy(false);

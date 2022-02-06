@@ -143,7 +143,7 @@ public class Functionality {
      * Method tests whether the reallocation after removing the ECS Server works with more KV Servers in a limited
      * timeframe.
      */
-    public void testPerformance() throws IOException {
+    public void testECSfailureWithMoreKVs() throws IOException {
 
         Thread nio1 = new Thread(new Runnable() {
             @Override

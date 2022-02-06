@@ -192,4 +192,8 @@ public class FileManager {
         }
 
     }
+//
+//    public synchronized void deleteFile() {
+//        file.delete();
+//    }
 }
