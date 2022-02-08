@@ -43,7 +43,8 @@ public class ConnectionHandleThread extends Thread {
             pingThread.start();
 
             System.out.println("Added Server " + serverInfo + " to the storage service");
-            System.out.println("--------------------Number " + ecsLogic.metaData.size() + " on " + System.currentTimeMillis() + "----------------");
+//            System.out.println("--------------------Number " + ecsLogic.metaData.size() + " on " +
+//                    System.currentTimeMillis() + "----------------");
 
         } catch(Exception ex) {
             ex.printStackTrace();

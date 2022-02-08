@@ -68,11 +68,11 @@ public class SimpleNioServer {
             // Wait for an event one of the registered channels
             this.inSelect = true;
             this.selector.select();
-            this.inSelect = false;
 
             if (this.closed) {
                 break;
             }
+            this.inSelect = false;
 
             // Iterate over the set of keys for which events are available
             Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();

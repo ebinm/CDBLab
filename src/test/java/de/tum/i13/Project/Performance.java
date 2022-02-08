@@ -125,7 +125,7 @@ public class Performance {
         nio2.start();
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -164,13 +164,14 @@ public class Performance {
      */
     public void testVariousKVs() throws IOException {
 
-        int firstPort = 6359;
-//        int firstPort = getRandomNumber(49152, 65535);
+//        int firstPort = 6359;
+        int firstPort = getRandomNumber(49152, 65535);
         Thread nio1 = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + firstPort, "-dPerformanceTest/" +firstPort, "-ll=OFF"});
+                    StartSimpleNioServer.main(new String[]{"-b 127.0.0.1:" + port, "-p" + firstPort,
+                            "-dPerformanceTest/" +firstPort, "-ll=OFF"});
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -178,33 +179,33 @@ public class Performance {
         });
         nio1.start();
 
-//        Socket s = new Socket("127.0.0.1", firstPort);
-//        PrintWriter output = new PrintWriter(s.getOutputStream());
-//        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-//
-//        ActiveConnection activeConnection = new ActiveConnection(s, output, input);
-//
-//        System.out.println(activeConnection.readline());
-//
-//        System.out.println("Putting in data to the first kv server");
-//        List<String> keys = new LinkedList<>();
-//        for (int i = 1; i <= 500; i++) {
-//            String key = randomString(30);
-//            String value = randomString(30);
-//
-//            activeConnection.write("put " + key + " " + value);
-//            String message = activeConnection.readline();
-//            if (!message.equals("put_success " + key)) {
-//                i = i - 1;
-//            } else {
-//                keys.add(key);
-//            }
-//        }
+        Socket s = new Socket("127.0.0.1", firstPort);
+        PrintWriter output = new PrintWriter(s.getOutputStream());
+        BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+        ActiveConnection activeConnection = new ActiveConnection(s, output, input);
+
+        System.out.println(activeConnection.readline());
+
+        System.out.println("Putting in data to the first kv server");
+        List<String> keys = new LinkedList<>();
+        for (int i = 1; i <= 500; i++) {
+            String key = randomString(30);
+            String value = randomString(30);
+
+            activeConnection.write("put " + key + " " + value);
+            String message = activeConnection.readline();
+            if (!message.equals("put_success " + key)) {
+                i = i - 1;
+            } else {
+                keys.add(key);
+            }
+        }
 
         System.out.println("Starting more kv servers");
         List<Integer> ports = new LinkedList<>();
         ports.add(firstPort);
-        for(int i = 1; i <=7; i++) {
+        for(int i = 1; i <=5; i++) {
 
             int id;
             do {
@@ -235,7 +236,7 @@ public class Performance {
         }
 
         try {
-            Thread.sleep(40000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -245,7 +246,7 @@ public class Performance {
 
         System.out.println("Finished");
         try {
-            Thread.sleep(80000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

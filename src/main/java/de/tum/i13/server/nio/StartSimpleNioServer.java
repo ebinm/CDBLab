@@ -15,8 +15,12 @@ public class StartSimpleNioServer {
     public static Logger logger = Logger.getLogger(StartSimpleNioServer.class.getName());
 
     public static void main(String[] args) throws IOException {
-//        String test = "5162";
-        Config cfg = parseCommandlineArgs(/*new String[]{"-b 127.0.0.1:5153", "-p"+test, "-d"+test}*/args);  //Do not change this
+//        String port = "5162";
+//        String test = "Demonstration/KVServer1";
+//        String test = "Demonstration/KVServer2_ToBeTransformed";
+//        String test = "Demonstration/KVServer3";
+//        String test = "Demonstration/KVServer4";
+        Config cfg = parseCommandlineArgs(/*new String[]{"-b 127.0.0.1:5153", "-p"+port, "-d"+test}*/args);  //Do not change this
         setupLogging(cfg.logfile);
         logger.info("Config: " + cfg.toString());
 

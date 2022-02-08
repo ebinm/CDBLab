@@ -239,6 +239,7 @@ public class ECSLogic {
         LOGGER.info("Updating Metadata on all servers");
 
         updated = metaData.size();
+//        LOGGER.info("Updating " + updated + " KV Servers");
         writeAllServers("update_metaData " + getMetaData());
 
     }
@@ -293,7 +294,7 @@ public class ECSLogic {
 
     public synchronized void inform() {
         this.updated--;
-//        LOGGER.info(String.valueOf(updated));
+//        LOGGER.info(String.valueOf(updated) + " updated");
 
         if(updated == 0) {
             setBusy(false);

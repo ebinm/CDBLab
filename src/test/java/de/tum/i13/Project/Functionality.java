@@ -200,7 +200,7 @@ public class Functionality {
         System.out.println(activeConnection.readline());
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -225,7 +225,7 @@ public class Functionality {
         stopECS();
 
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -428,7 +428,7 @@ public class Functionality {
         nio2.start();
 
         try {
-            Thread.sleep(100);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
